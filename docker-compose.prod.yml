@@ -1,0 +1,87 @@
+version: "3"
+
+networks:
+  default:
+    external:
+      name: bookstore-network
+
+services:
+  db:
+    image: postgres:14.5
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - postgres_backups:/backups
+    ports:
+      - "5435:5432"
+
+  redis:
+    image: redis:5.0
+
+  api: &api
+    build:
+      context: backend
+    env_file:
+      - .env
+    environment:
+      DJANGO_SETTINGS_MODULE: "api.settings.testing_env"
+    volumes:
+      - media_storage:/storage/django_media/:rw
+      - static_storage:/storage/django_static/:rw
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+
+  celeryworker:
+    <<: *api
+    ports: []
+    command: bash -c "cd api;
+      poetry run celery -A api worker -l info"
+    depends_on:
+      - api
+
+  celerybeat:
+    <<: *api
+    ports: []
+    command: bash -c "cd api;
+      poetry run celery -A api beat -l info --pidfile=''"
+    depends_on:
+      - api
+
+  frontend:
+    build:
+      context: frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+
+  nginx:
+    image: steveltn/https-portal:1.22.1
+    depends_on:
+      - api
+      - frontend
+    environment:
+      DOMAINS: "${WEB_HOSTNAME} -> http://frontend:3000, ${API_HOSTNAME} -> http://api:8000"
+      STAGE: "production"
+    volumes:
+      - static_storage:/data/https-portal/vhosts/django_static/:rw
+      - media_storage:/data/https-portal/vhosts/django_media/:rw
+      - https-portal-data:/var/lib/https-portal
+      - ./nginx-conf/${API_HOSTNAME}.conf.erb:/var/lib/nginx-conf/${API_HOSTNAME}.conf.erb:ro
+      - ./nginx-conf/${API_HOSTNAME}.ssl.conf.erb:/var/lib/nginx-conf/${API_HOSTNAME}.ssl.conf.erb:ro
+    env_file:
+      - .env
+    ports:
+      - "80:80"
+      - "443:443"
+
+volumes:
+  postgres_data: {}
+  postgres_backups: {}
+  static_storage: {}
+  media_storage: {}
+  https-portal-data:

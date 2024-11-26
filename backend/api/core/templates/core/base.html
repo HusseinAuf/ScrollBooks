@@ -1,0 +1,34 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}{% endblock %}</title>
+    <!-- <link rel="stylesheet" href="{% static 'css/styles.css' %}"> -->
+    {% include 'core/styling.html' %}
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+    <table class="container">
+      <tr>
+        <td align="center">
+          <table class="inner-table">
+            <tr>
+              <td class="header">
+                <img
+                  class="logo"
+                  src="{{ LOGO_URL }}"
+                  alt="logo"
+                />
+                Scroll Books
+              </td>
+            </tr>
+            {% block content %}{% endblock %}
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

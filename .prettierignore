@@ -1,0 +1,2 @@
+*.dj.html
+backend/**/templates/**/*.html

@@ -1,0 +1,151 @@
+include:
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
+  - template: Security/License-Scanning.gitlab-ci.yml
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
+  - https://gitlab.com/gitlab-org/gitlab/-/raw/9a1dbbadf89e1eb6c729206542e11161abf71129/lib/gitlab/ci/templates/Jobs/Secret-Detection.gitlab-ci.yml
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == "main"
+
+stages:
+  - test
+  - build
+  - deploy
+
+test_api:
+  only:
+    - merge_requests
+  stage: test
+  image: python:3.9
+  services:
+    - name: postgres:14.5
+      alias: postgres
+    - name: redis:latest
+      alias: redis
+  script:
+    - poetry check
+    - poetry install --no-interaction --sync
+    - poetry run safety check --full-report
+    - poetry run pylint api/*.py -v
+    - poetry run black --check --exclude="migrations" api
+    - poetry run flake8 api -v
+    - cd api
+    - poetry run python manage.py makemigrations --dry-run --check
+    - poetry run coverage run manage.py test --noinput --verbosity 2
+    - poetry run coverage report
+  variables:
+    POSTGRES_DB: bookstore_db_test
+    POSTGRES_USER: test
+    POSTGRES_PASSWORD: test
+    TEST_POSTGRES_DB: bookstore_db_test
+    TEST_POSTGRES_USER: test
+    TEST_POSTGRES_PASSWORD: test
+    TEST_DATABASE_URL: postgres://test:test@postgres/bookstore_db_test
+    TEST_REDIS_URL: redis://redis:6379/0
+    TEST_POSTGRES_HOST: db
+    TEST_POSTGRES_PORT: 5432
+    TEST_EMAIL_HOST: smtp.gmail.com
+    TEST_EMAIL_USE_TLS: "true"
+    TEST_EMAIL_PORT: 587
+    TEST_EMAIL_HOST_USER: email@host.com
+    TEST_EMAIL_HOST_PASSWORD: your_app_password
+    TEST_DJANGO_SETTINGS_MODULE: api.settings.test
+    TEST_API_ROOT_URL: http://localhost:8000
+    TEST_WEB_ROOT_URL: http://localhost:3000
+    TEST_JWT_SECRET_KEY: JWT_SECRET_KEY
+    TEST_API_HOSTNAME: localhost
+    TEST_WEB_HOSTNAME: localhost
+
+  before_script:
+    - export TEST_ENV_VARS=$(env | grep TEST_)
+    - export TEST_ENV_VARS=$(echo "$TEST_ENV_VARS" | perl -pe 's/TEST_//g')
+    - export $(echo "$TEST_ENV_VARS" | xargs)
+    - pip install poetry==1.2.1
+    - cd backend
+    - export PYTHONPATH=".:$PYTHONPATH"
+    - echo $PYTHONPATH
+
+test_frontend:
+  only:
+    - merge_requests
+  stage: test
+  image: node:16.17.1
+  script:
+    - yarn
+    - yarn run improved-yarn-audit --min-severity moderate || [[ $? -lt 8 ]]
+    - prettier --debug-check "./src/**/*.{js,ts,jsx,tsx}"
+    - npx eslint -c .eslintrc.json "./src/**/*.{js,ts,jsx,tsx}"
+  before_script:
+    - npm install -g prettier
+    - cd frontend
+
+test_docker_build:
+  only:
+    - merge_requests
+  stage: build
+  image:
+    name: docker/compose:latest
+    entrypoint: ["/bin/sh", "-c"]
+  services:
+    - name: docker:dind
+      entrypoint: ["env", "-u", "DOCKER_HOST"]
+      command: ["dockerd-entrypoint.sh"]
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+
+  environment:
+    name: staging
+    action: prepare
+
+  before_script:
+    - "docker version"
+    - "chmod +x ./setup_env.sh"
+    - "sh ./setup_env.sh"
+  script:
+    - "docker-compose -f docker-compose.prod.yml build"
+
+deploy_definition: &deploy_definition
+  only:
+    - not-a-job
+  stage: deploy
+
+  before_script:
+    - apt-get update -y
+    - apt-get -y install rsync
+    - chmod +x ./setup_env.sh
+    - bash ./setup_env.sh
+
+  script:
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 700 ~/.ssh/id_rsa
+    - eval "$(ssh-agent -s)"
+    - ssh-add ~/.ssh/id_rsa
+    - ssh-keyscan -H $(echo $INSTANCE_IP) >> ~/.ssh/known_hosts
+    - chmod +x ./deploy.sh
+    - ls -la
+    - rsync -chavzP --stats --delete $(pwd)/ root@$INSTANCE_IP:/app
+    - ssh root@$INSTANCE_IP
+    - bash deploy.sh
+
+deploy:staging:
+  <<: *deploy_definition
+  only:
+    - staging
+  environment:
+    name: staging
+    action: start
+
+deploy:production:
+  <<: *deploy_definition
+  only:
+    - main
+  environment:
+    name: production
+    action: start

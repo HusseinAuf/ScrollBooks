@@ -1,0 +1,26 @@
+server {
+    listen       80;
+    <% if ENV['LISTEN_IPV6'] && ENV['LISTEN_IPV6'].downcase == 'true' %>
+    listen       [::]:80;
+    <% end %>
+
+    server_name  <%= domain.name %>;
+
+    location / {
+      return    301 https://$server_name$request_uri;
+    }
+
+    location /django_static/{
+       root /data/https-portal/vhosts;
+    }
+    location /django_media/{
+       root /data/https-portal/vhosts;
+    }
+
+    <%= acme_challenge_location %>
+
+    <% if ENV['CUSTOM_NGINX_SERVER_PLAIN_CONFIG_BLOCK'] %>
+      <%= ENV['CUSTOM_NGINX_SERVER_PLAIN_CONFIG_BLOCK'] %>
+    <% end %>
+
+}

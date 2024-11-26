@@ -1,0 +1,9 @@
+[MASTER]
+load-plugins=pylint_celery
+ignore=manage.py, tests.py, urls.py, migrations
+
+[FORMAT]
+max-line-length=120
+
+[DESIGN]
+max-parents=12

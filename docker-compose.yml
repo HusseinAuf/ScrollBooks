@@ -1,0 +1,73 @@
+version: "3"
+
+networks:
+  default:
+    external:
+      name: bookstore-network
+
+services:
+  db:
+    image: postgres:14.5
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - postgres_backups:/backups
+    ports:
+      - "5435:5432"
+
+  redis:
+    image: redis:5.0
+
+  api: &api
+    platform: linux/amd64
+    build:
+      context: backend
+    env_file:
+      - .env
+    volumes:
+      - ./backend:/home/bookstore
+      - ./backend/storage:/storage
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+
+  celeryworker:
+    <<: *api
+    ports: []
+    command: bash -c "cd api;
+      poetry run celery -A api worker -l info"
+    depends_on:
+      - api
+
+  celerybeat:
+    <<: *api
+    ports: []
+    command: bash -c "cd api;
+      poetry run celery -A api beat -l info --pidfile=''"
+    depends_on:
+      - api
+
+  frontend:
+    platform: linux/amd64
+    build:
+      context: frontend
+    volumes:
+      - ./frontend:/home/bookstore
+      - /home/bookstore/node_modules
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+
+  cleanup:
+    image: docker:20.10-dind # Use a Docker-in-Docker image
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # Allow access to the Docker daemon
+    command: sh -c "docker image prune -f && docker volume prune -f"
+
+volumes:
+  postgres_data: {}
+  postgres_backups: {}
