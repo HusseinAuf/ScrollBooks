@@ -20,13 +20,16 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from users.emails import send_reset_password_email
+from users.filters import UserFilter
+from books.serializers import BookSerializer
+from books.models import Book
 
 
 class UserViewSet(BaseViewSet):
     model = User
     queryset = model.objects.all()
     serializer_class = UserSerializer
-    # filterset_class = UserFilter
+    filterset_class = UserFilter
     permission_classes = [
         UserPermissions,
     ]

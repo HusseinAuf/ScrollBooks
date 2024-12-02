@@ -39,6 +39,8 @@ class ReviewSerializer(BaseSerializer):
         read_only_fields = ["user"]
 
     def to_representation(self, instance):
+        from users.serializers import UserSerializer
+
         data = super().to_representation(instance)
-        data["book"] = BookSerializer(instance.book).data
+        data["user"] = UserSerializer(instance.user).data
         return data

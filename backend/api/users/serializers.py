@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from users.models import User
 from books.serializers import AuthorSerializer
+from users.models import User
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 from rest_framework_simplejwt.exceptions import InvalidToken
 from django.conf import settings
@@ -14,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["id", "email", "name", "phone_number", "password", "is_author", "author"]
+        fields = "__all__"
         extra_kwargs = {
             "password": {"write_only": True},
         }

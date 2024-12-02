@@ -9,7 +9,5 @@ class UserPermissions(BasePermissions):
         return super().has_permission(request, view)
 
     def has_object_permission(self, request, view, obj):
-        if view.action in ["create"]:
-            return True
         user = request.user
         return obj.pk == user.pk or user.is_superuser

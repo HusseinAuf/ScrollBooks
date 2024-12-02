@@ -5,7 +5,7 @@ from model_utils.models import TimeStampedModel
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 
-class Author(models.Model):
+class Author(TimeStampedModel):
     user = models.OneToOneField("users.User", on_delete=models.CASCADE, related_name="author")
     bio = models.TextField(null=True, blank=True)
     website = models.URLField(null=True, blank=True)
@@ -30,7 +30,7 @@ class BookCategory(models.TextChoices):
     CLASSICS = ("classics", _("Classics"))
 
 
-class Category(models.Model):
+class Category(TimeStampedModel):
     name = models.CharField(max_length=100, choices=BookCategory.choices, unique=True)
 
     class Meta:
@@ -46,7 +46,7 @@ class FileFormat(models.TextChoices):
     MOBI = ("MOBI", _("MOBI"))
 
 
-class Book(models.Model, TimeStampedModel):
+class Book(TimeStampedModel):
     def get_book_file_uploaded_path(self, filename):
         return "book-files/" + get_random_file_name(filename)
 
@@ -69,7 +69,7 @@ class Book(models.Model, TimeStampedModel):
         return self.title
 
 
-class Review(models.Model, TimeStampedModel):
+class Review(TimeStampedModel):
     user = models.ForeignKey("users.User", related_name="reviews", on_delete=models.CASCADE)
     book = models.ForeignKey(Book, related_name="reviews", on_delete=models.CASCADE)
     rating = models.PositiveSmallIntegerField(
@@ -80,5 +80,5 @@ class Review(models.Model, TimeStampedModel):
     class Meta:
         unique_together = ("user", "book")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Review by {self.user} for {self.book}"
