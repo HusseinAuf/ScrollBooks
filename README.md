@@ -1,6 +1,6 @@
 # ScrollBooks
 
-![Description of Image](https://drive.google.com/file/d/1Dclyg8JOIeuSPnxN33ojY7TOnKG9mdsP/preview)
+![](https://drive.google.com/uc?id=1Dclyg8JOIeuSPnxN33ojY7TOnKG9mdsP)
 
 This project consists of a backend API, frontend, and associated services. It uses Docker Compose to run the services including the API, Celery Beat, Celery Worker, Redis, PostgreSQL, and the frontend application.
 
