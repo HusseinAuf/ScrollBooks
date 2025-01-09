@@ -16,14 +16,18 @@ router.register("users", UserViewSet, basename="user")
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("token/refresh/", TokenRefreshView.as_view(), name="token-refresh"),
     path("login/", LoginView.as_view(), name="login"),
-    path("verify-email/<slug:uidb64>/<slug:token>/", VerifyEmail.as_view(), name="login"),
+    path(
+        "verify-email/<slug:uidb64>/<slug:token>/",
+        VerifyEmail.as_view(),
+        name="verify-email",
+    ),
     path("logout/", LogoutView.as_view(), name="logout"),
-    path("password/reset/", PasswordResetView.as_view(), name="password_reset"),
+    path("password/reset/", PasswordResetView.as_view(), name="password-reset"),
     path(
         "password/reset/confirm/<slug:uidb64>/<slug:token>/",
         PasswordResetConfirmView.as_view(),
-        name="password_reset_confirm",
+        name="password-reset-confirm",
     ),
 ]

@@ -1,6 +1,6 @@
-FROM node:16.17.1
+FROM node:18
 
-WORKDIR /home/bookstore
+WORKDIR /home/scrollbooks
 
 COPY yarn.lock ./
 

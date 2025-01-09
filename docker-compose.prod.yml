@@ -3,7 +3,7 @@ version: "3"
 networks:
   default:
     external:
-      name: bookstore-network
+      name: scrollbooks-network
 
 services:
   db:
@@ -27,8 +27,8 @@ services:
     environment:
       DJANGO_SETTINGS_MODULE: "api.settings.testing_env"
     volumes:
-      - media_storage:/storage/django_media/:rw
-      - static_storage:/storage/django_static/:rw
+      - media_storage:/api/storage/django_media/:rw
+      - static_storage:/api/storage/django_static/:rw
     ports:
       - "8000:8000"
     depends_on:

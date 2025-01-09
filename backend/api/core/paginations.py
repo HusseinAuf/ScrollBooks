@@ -19,8 +19,14 @@ class BasePagination(pagination.PageNumberPagination):
                 ),
                 "pagination": OrderedDict(
                     [
-                        ("prev", self.page.previous_page_number() if self.page.has_previous() else None),
-                        ("next", self.page.next_page_number() if self.page.has_next() else None),
+                        (
+                            "prev",
+                            self.page.previous_page_number() if self.page.has_previous() else None,
+                        ),
+                        (
+                            "next",
+                            self.page.next_page_number() if self.page.has_next() else None,
+                        ),
                         ("last", self.page.paginator.num_pages),
                     ]
                 ),

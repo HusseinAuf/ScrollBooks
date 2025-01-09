@@ -5,7 +5,10 @@ from django.utils.translation import gettext_lazy as _
 
 
 def send_verification_email(user, uid, token):
-    context = {"user_name": user.name, "verify_link": f"{settings.WEB_ROOT_URL}/verify-email/{uid}/{token}"}
+    context = {
+        "user_name": user.name,
+        "verify_link": f"{settings.WEB_ROOT_URL}/verify-email/{uid}/{token}",
+    }
     html_content = render_to_string_global_context("users/verify_email.html", context)
     send_email.delay(
         subject=_("Verify your email address"),

@@ -7,9 +7,15 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Author(TimeStampedModel):
     user = models.OneToOneField("users.User", on_delete=models.CASCADE, related_name="author")
-    bio = models.TextField(null=True, blank=True)
-    website = models.URLField(null=True, blank=True)
-    date_of_birth = models.DateField(null=True, blank=True)
+    bio = models.TextField(blank=True)
+    website = models.URLField(blank=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+
+    class Meta:
+        ordering = ["-created", "user"]
+
+    def __str__(self) -> str:
+        return self.user.email
 
 
 class BookCategory(models.TextChoices):
@@ -35,15 +41,10 @@ class Category(TimeStampedModel):
 
     class Meta:
         verbose_name_plural = "Categories"
+        ordering = ["-created", "name"]
 
     def __str__(self) -> str:
         return self.name
-
-
-class FileFormat(models.TextChoices):
-    PDF = ("PDF", _("PDF"))
-    EPUB = ("EPUB", _("EPUB"))
-    MOBI = ("MOBI", _("MOBI"))
 
 
 class Book(TimeStampedModel):
@@ -51,22 +52,57 @@ class Book(TimeStampedModel):
         return "book-files/" + get_random_file_name(filename)
 
     def get_cover_image_uploaded_path(self, filename):
-        return "cover-images/" + get_random_file_name(filename)
+        return "book-cover-images/" + get_random_file_name(filename)
 
     author = models.ForeignKey("books.Author", on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     categories = models.ManyToManyField("books.Category", related_name="books")
-    description = models.TextField()
+    description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     # isbn = models.CharField(max_length=13, unique=True)
     file = models.FileField(upload_to=get_book_file_uploaded_path)
-    format = models.CharField(max_length=10, choices=FileFormat.choices)
-    cover_image = models.ImageField(upload_to=get_cover_image_uploaded_path, null=True, blank=True)
-    published_date = models.DateField()
-    download_count = models.IntegerField(default=0)
+    cover_image = models.ImageField(upload_to=get_cover_image_uploaded_path, blank=True, null=True)
+    published_date = models.DateField(blank=True, null=True)
+
+    class Meta:
+        ordering = ["-created", "title"]
 
     def __str__(self) -> str:
         return self.title
+
+
+class OrderStatus(models.TextChoices):
+    PENDING = ("pending", _("Pending"))
+    COMPLETED = ("completed", _("Completed"))
+    CANCELED = ("canceled", _("Canceled"))
+
+
+class Order(TimeStampedModel):
+    user = models.ForeignKey("users.User", on_delete=models.CASCADE, related_name="orders")
+    stripe_session_id = models.CharField(max_length=255, blank=True)
+    stripe_session_url = models.URLField(max_length=500, blank=True)
+    status = models.CharField(max_length=10, choices=OrderStatus.choices, default=OrderStatus.PENDING.value)
+
+    class Meta:
+        ordering = ["-created"]
+
+    def total_price(self):
+        return sum(item.price for item in self.order_items.all())
+
+    def __str__(self):
+        return f"Order {self.id} by {self.user.email}"
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="order_items")
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=10, decimal_places=2)  # Price at the time of purchase
+
+    class Meta:
+        ordering = ["book"]
+
+    def __str__(self):
+        return f"{self.book.title} in Order {self.order.id}"
 
 
 class Review(TimeStampedModel):
@@ -79,6 +115,34 @@ class Review(TimeStampedModel):
 
     class Meta:
         unique_together = ("user", "book")
+        ordering = ["-created"]
 
     def __str__(self) -> str:
-        return f"Review by {self.user} for {self.book}"
+        return f"Review by {self.user.email} for {self.book.title}"
+
+
+class Cart(TimeStampedModel):
+    user = models.OneToOneField("users.User", on_delete=models.CASCADE, unique=True, related_name="cart")
+
+    def __str__(self):
+        return f"Cart of {self.user.email}"
+
+    @property
+    def total_price(self):
+        return sum(item.price for item in self.cart_items.all())
+
+
+class CartItem(TimeStampedModel):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="cart_items")
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ("cart", "book")
+        ordering = ["-created", "book"]
+
+    def __str__(self) -> str:
+        return f"{self.cart.user.email} | {self.book.title}"
+
+    @property
+    def price(self):
+        return self.book.price

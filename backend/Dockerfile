@@ -32,7 +32,7 @@ COPY pyproject.toml ./
 
 RUN poetry install --no-root --only main --sync
 
-WORKDIR /home/bookstore
+WORKDIR /home/scrollbooks
 
 COPY ./ ./
 
@@ -44,8 +44,8 @@ ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
 
 
 CMD uvicorn api.asgi:application --host 0.0.0.0 --port 8000 \
-  --app-dir /home/bookstore/api \
+  --app-dir /home/scrollbooks/api \
   --reload \
-  --reload-dir /home/bookstore/api
+  --reload-dir /home/scrollbooks/api
 
 EXPOSE 8000

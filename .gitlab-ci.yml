@@ -38,13 +38,13 @@ test_api:
     - poetry run coverage run manage.py test --noinput --verbosity 2
     - poetry run coverage report
   variables:
-    POSTGRES_DB: bookstore_db_test
+    POSTGRES_DB: scrollbooks_db_test
     POSTGRES_USER: test
     POSTGRES_PASSWORD: test
-    TEST_POSTGRES_DB: bookstore_db_test
+    TEST_POSTGRES_DB: scrollbooks_db_test
     TEST_POSTGRES_USER: test
     TEST_POSTGRES_PASSWORD: test
-    TEST_DATABASE_URL: postgres://test:test@postgres/bookstore_db_test
+    TEST_DATABASE_URL: postgres://test:test@postgres/scrollbooks_db_test
     TEST_REDIS_URL: redis://redis:6379/0
     TEST_POSTGRES_HOST: db
     TEST_POSTGRES_PORT: 5432

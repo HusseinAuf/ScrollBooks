@@ -1,12 +1,16 @@
 from rest_framework import serializers
 from books.serializers import AuthorSerializer
 from users.models import User
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
+from rest_framework_simplejwt.serializers import (
+    TokenObtainPairSerializer,
+    TokenRefreshSerializer,
+)
 from rest_framework_simplejwt.exceptions import InvalidToken
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.hashers import check_password
 from users.utils import validate_onetime_token_and_get_user
+from core.utils import dynamic_exclude
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -14,7 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = "__all__"
+        exclude = dynamic_exclude(model, extra_fields=["favorite_books", "library"])
         extra_kwargs = {
             "password": {"write_only": True},
         }
@@ -91,8 +95,8 @@ class CookieTokenRefreshSerializer(TokenRefreshSerializer):
 
     def extract_refresh_token(self):
         request = self.context["request"]
-        if "refresh" in request.data and request.data["refresh"] != "":
-            return request.data["refresh"]
+        if "refresh_token" in request.data and request.data["refresh_token"] != "":
+            return request.data["refresh_token"]
 
         cookie_name = settings.JWT_AUTH_REFRESH_COOKIE_NAME
         if cookie_name and cookie_name in request.COOKIES:
@@ -103,6 +107,6 @@ class CookieTokenRefreshSerializer(TokenRefreshSerializer):
     def validate(self, attrs):
         attrs["refresh"] = self.extract_refresh_token()
         data = super().validate(attrs)
-        # data['refresh_token'] = data.pop('refresh')
-        # data['access_token'] = data.pop('access')
+        data["refresh_token"] = data.pop("refresh")
+        data["access_token"] = data.pop("access")
         return data

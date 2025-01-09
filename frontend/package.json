@@ -1,10 +1,10 @@
 {
-  "name": "musicplatform-frontend",
+  "name": "scrollbooks-frontend",
   "version": "0.1.0",
   "private": true,
   "main": "index.js",
-  "repository": "git@code.bld.ai:house-numoo/templates/django-react.git",
-  "author": "Ahmed Mohamedeen <ah.mohamadeen@gmail.com>",
+  "repository": "https://github.com/HusseinAuf/ScrollBooks",
+  "author": "Hussein Auf <hu.auf2000@gmail.com>",
   "license": "MIT",
   "scripts": {
     "start": "react-scripts start",
@@ -13,16 +13,19 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "autoprefixer": "^10.4.19",
+    "@hookform/resolvers": "^3.10.0",
+    "@react-oauth/google": "^0.12.1",
     "axios": "^1.6.8",
-    "postcss": "^8.4.38",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.54.2",
+    "react-icons": "^5.4.0",
     "react-router-dom": "^6.23.1",
     "react-scripts": "5.0.1",
-    "tailwindcss": "^3.4.3",
+    "react-toastify": "^11.0.2",
     "typescript": "^4.9.4",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "yup": "^1.6.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",
@@ -39,10 +42,13 @@
     "@types/react-router-dom": "^5.3.3",
     "@typescript-eslint/eslint-plugin": "^5.39.0",
     "@typescript-eslint/parser": "^5.39.0",
+    "autoprefixer": "^10.4.20",
     "eslint": "^8.22.0",
     "eslint-plugin-prettier": "^4.2.1",
     "improved-yarn-audit": "^3.0.0",
-    "prettier": "^2.7.1"
+    "postcss": "^8.4.49",
+    "prettier": "^2.7.1",
+    "tailwindcss": "^3.4.17"
   },
   "browserslist": {
     "production": [

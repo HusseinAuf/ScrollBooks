@@ -32,7 +32,7 @@ ssh -o StrictHostKeyChecking=no root@$INSTANCE_IP << 'ENDSSH'
   cd /app
   ls -la
   export $(cat .env | xargs)
-  docker network create bookstore-network
+  docker network create scrollbooks-network
   docker-compose -f docker-compose.deploy.yml down
   docker-compose -f docker-compose.deploy.yml stop
   docker-compose -f docker-compose.deploy.yml up --build -d

@@ -13,4 +13,5 @@ yarn-error.log*
 .venv
 .coverage
 info_documents
-storage
+**/backend/**/storage
+delete_this_file.*

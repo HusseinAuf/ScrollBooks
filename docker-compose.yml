@@ -3,7 +3,7 @@ version: "3"
 networks:
   default:
     external:
-      name: bookstore-network
+      name: scrollbooks-network
 
 services:
   db:
@@ -26,8 +26,8 @@ services:
     env_file:
       - .env
     volumes:
-      - ./backend:/home/bookstore
-      - ./backend/storage:/storage
+      - ./backend:/home/scrollbooks
+      - ./backend/api/storage:/storage
     ports:
       - "8000:8000"
     depends_on:
@@ -55,12 +55,17 @@ services:
     build:
       context: frontend
     volumes:
-      - ./frontend:/home/bookstore
-      - /home/bookstore/node_modules
+      - ./frontend:/home/scrollbooks
+      - /home/scrollbooks/node_modules
     ports:
       - "3000:3000"
+    environment:
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
     env_file:
       - .env
+    stdin_open: true
+    tty: true
 
   cleanup:
     image: docker:20.10-dind # Use a Docker-in-Docker image

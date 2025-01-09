@@ -36,18 +36,18 @@ repos:
     hooks:
       - id: prettier
 
-  - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v8.29.0
-    hooks:
-      - id: eslint
-        files: \.[jt]sx?$ # *.js, *.jsx, *.ts and *.tsx
-        types: [file]
-        additional_dependencies:
-          - eslint@^8.24.0
-          - eslint-plugin-react@6.10.3
-          - "@typescript-eslint/eslint-plugin@^5.39.0"
-          - "@typescript-eslint/parser@^5.39.0"
-          - eslint-plugin-prettier@^4.2.1
+  # - repo: https://github.com/pre-commit/mirrors-eslint
+  #   rev: v8.29.0
+  #   hooks:
+  #     - id: eslint
+  #       files: \.[jt]sx?$ # *.js, *.jsx, *.ts and *.tsx
+  #       types: [file]
+  #       additional_dependencies:
+  #         - eslint@^8.24.0
+  #         - eslint-plugin-react@6.10.3
+  #         - "@typescript-eslint/eslint-plugin@^5.39.0"
+  #         - "@typescript-eslint/parser@^5.39.0"
+  #         - eslint-plugin-prettier@^4.2.1
 
   # - repo: https://github.com/pycqa/isort
   #   rev: 5.10.1

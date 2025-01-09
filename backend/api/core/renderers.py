@@ -60,13 +60,11 @@ class BaseJSONRenderer(JSONRenderer):
     def get_error_response(self, data, status_code):
         error_response = {
             "status_code": status_code,
-            "message": "Fail",
+            "detail": "Fail",
             "error": data,
         }
         if isinstance(data, dict):
-            error_response["message"] = (
-                data.pop("message", None) or data.pop("detail", None) or error_response["message"]
-            )
+            error_response["detail"] = data.pop("message", None) or data.pop("detail", None) or error_response["detail"]
 
         return error_response
 
@@ -78,9 +76,13 @@ class BaseJSONRenderer(JSONRenderer):
 
         if status_code >= status.HTTP_400_BAD_REQUEST:
             return super(BaseJSONRenderer, self).render(
-                self.get_error_response(data, status_code), accepted_media_type, renderer_context
+                self.get_error_response(data, status_code),
+                accepted_media_type,
+                renderer_context,
             )
 
         return super(BaseJSONRenderer, self).render(
-            self.get_success_response(data, status_code), accepted_media_type, renderer_context
+            self.get_success_response(data, status_code),
+            accepted_media_type,
+            renderer_context,
         )

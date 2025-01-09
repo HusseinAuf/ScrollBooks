@@ -1,12 +1,20 @@
 from rest_framework.response import Response
-from core.views import BaseViewSet
+from core.views import (
+    BaseViewSet,
+    NonDeletableViewSet,
+    NonListableViewSet,
+    NonRetrievableViewSet,
+)
 from users.serializers import (
     UserSerializer,
     PasswordResetConfirmSerializer,
     PasswordResetSerializer,
 )
 from users.models import User
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView as JwtTokenRefreshView
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView as JwtTokenRefreshView,
+)
 from core.renderers import BaseJSONRenderer
 from rest_framework.renderers import BrowsableAPIRenderer
 from rest_framework import status, generics
@@ -23,37 +31,32 @@ from users.emails import send_reset_password_email
 from users.filters import UserFilter
 from books.serializers import BookSerializer
 from books.models import Book
+from django.db.models import Q
+from rest_framework.permissions import AllowAny
 
 
-class UserViewSet(BaseViewSet):
+class UserViewSet(BaseViewSet, NonDeletableViewSet, NonListableViewSet, NonRetrievableViewSet):
     model = User
     queryset = model.objects.all()
     serializer_class = UserSerializer
     filterset_class = UserFilter
-    permission_classes = [
-        UserPermissions,
-    ]
+    permission_classes = [UserPermissions]
+    # authentication_classes = []
+    permission_relation = "pk"
+
+    def get_queryset(self):
+        return super().get_queryset().filter(Q(id=self.request.user.id) | Q(author__isnull=False))
 
     @action(detail=False, methods=["get"], url_name="me", url_path="me")
     def me(self, request):
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
 
-    # @action(detail=False, methods=["patch"], url_name="change-password", url_path="change-password")
-    # def change_password(self, request):
-    #     serializer = ChangePasswordSerializer(request.user, data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-    #     serializer.save()
-    #     return Response({"detail": _("Password changed successfully")}, status=status.HTTP_200_OK)
-
-    # @action(detail=False, methods=["post"], url_name="register", url_path="register", permission_classes=[])
-    # def register(self, request, token, *args, **kwargs):
-    #     return super().create(request, *args, **kwargs)
-
 
 class BaseUserGenericAPIView(generics.GenericAPIView):
     renderer_classes = [BaseJSONRenderer, BrowsableAPIRenderer]
-    permission_classes = []
+    permission_classes = [AllowAny]
+    authentication_classes = []
 
     def get_queryset(self):
         return User.objects.all()
@@ -62,7 +65,8 @@ class BaseUserGenericAPIView(generics.GenericAPIView):
 class LoginView(TokenObtainPairView, BaseUserGenericAPIView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
-        set_jwt_cookies(response, response.data["access"], response.data.pop("refresh"))
+        response.data["access_token"] = response.data["access"]
+        set_jwt_cookies(response, response.data.pop("access"), response.data.pop("refresh"))
         return response
 
 
@@ -76,10 +80,6 @@ class VerifyEmail(BaseUserGenericAPIView):
 
 class LogoutView(BaseUserGenericAPIView):
     def get(self, request, *args, **kwargs):
-        # remove his related devices
-        if hasattr(request.user, "devices"):
-            request.user.devices.all().delete()
-
         response = Response(status=status.HTTP_200_OK)
         unset_jwt_cookies(response)
         return response
@@ -88,7 +88,11 @@ class LogoutView(BaseUserGenericAPIView):
 class TokenRefreshView(JwtTokenRefreshView, BaseUserGenericAPIView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
-        set_jwt_cookies(response, response.data.get("access_token"), response.data.get("refresh_token"))
+        set_jwt_cookies(
+            response,
+            response.data.get("access_token"),
+            response.data.get("refresh_token"),
+        )
         return response
 
 

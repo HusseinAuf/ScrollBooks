@@ -30,29 +30,41 @@ class BaseViewSet(viewsets.ModelViewSet):
             }
         )
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
 
-def method_not_allowed(method):
-    raise MethodNotAllowed(method=method)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return self.get_list_response(serializer.data, queryset)
 
 
 class NonListableViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
-        return method_not_allowed(request.method)
+        raise MethodNotAllowed(method=request.method)
 
 
 class NonCreatableViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
-        return method_not_allowed(request.method)
+        raise MethodNotAllowed(method=request.method)
 
 
 class NonUpdatableViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
-        return method_not_allowed(request.method)
+        raise MethodNotAllowed(method=request.method)
 
     def partial_update(self, request, *args, **kwargs):
-        return method_not_allowed(request.method)
+        raise MethodNotAllowed(method=request.method)
 
 
 class NonDeletableViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
-        return method_not_allowed(request.method)
+        raise MethodNotAllowed(method=request.method)
+
+
+class NonRetrievableViewSet(viewsets.ModelViewSet):
+    def retrieve(self, request, *args, **kwargs):
+        raise MethodNotAllowed(method=request.method)
