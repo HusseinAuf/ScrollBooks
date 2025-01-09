@@ -1,0 +1,1180 @@
+{
+  "info": {
+    "_postman_id": "0bff884e-c1dc-49a3-b0fd-ef123dbd2a17",
+    "name": "ScrollBooks",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "24265922"
+  },
+  "item": [
+    {
+      "name": "Books",
+      "item": [
+        {
+          "name": "Books",
+          "item": [
+            {
+              "name": "Retrieve",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/books/1/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "books", "1", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "List",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/books/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "books", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "My Books",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/books/?own=false",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "books", ""],
+                  "query": [
+                    {
+                      "key": "own",
+                      "value": "false"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Partial Update",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"categories\": [3, 4, \"2\", 4],\r\n    \"download_count\": \"sdf\",\r\n    \"author\": \"1\"\r\n\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/books/1/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "books", "1", ""],
+                  "query": [
+                    {
+                      "key": "",
+                      "value": null,
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "title",
+                      "value": "title",
+                      "type": "text"
+                    },
+                    {
+                      "key": "description",
+                      "value": "description",
+                      "type": "text"
+                    },
+                    {
+                      "key": "price",
+                      "value": "10",
+                      "type": "text"
+                    },
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": "/C:/Users/huauf/OneDrive/Desktop/df.pdf"
+                    },
+                    {
+                      "key": "format",
+                      "value": "PDF",
+                      "type": "text"
+                    },
+                    {
+                      "key": "published_date",
+                      "value": "2024-11-26",
+                      "type": "text"
+                    },
+                    {
+                      "key": "categories",
+                      "value": "1",
+                      "type": "text"
+                    },
+                    {
+                      "key": "categories",
+                      "value": "2",
+                      "type": "text"
+                    },
+                    {
+                      "key": "download_count",
+                      "value": "100",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/books/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "books", ""],
+                  "query": [
+                    {
+                      "key": "price",
+                      "value": "10",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/books/1/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "books", "1", ""]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Review",
+          "item": [
+            {
+              "name": "Reviews Nested in Books",
+              "item": [
+                {
+                  "name": "Retrieve",
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{BASE_URL}}/api/v1/books/books/1/reviews/1/",
+                      "host": ["{{BASE_URL}}"],
+                      "path": [
+                        "api",
+                        "v1",
+                        "books",
+                        "books",
+                        "1",
+                        "reviews",
+                        "1",
+                        ""
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "List",
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{BASE_URL}}/api/v1/books/books/1/reviews/",
+                      "host": ["{{BASE_URL}}"],
+                      "path": [
+                        "api",
+                        "v1",
+                        "books",
+                        "books",
+                        "1",
+                        "reviews",
+                        ""
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Partial Update",
+                  "request": {
+                    "method": "PATCH",
+                    "header": [],
+                    "body": {
+                      "mode": "formdata",
+                      "formdata": [
+                        {
+                          "key": "rating",
+                          "value": "4",
+                          "type": "text"
+                        }
+                      ]
+                    },
+                    "url": {
+                      "raw": "{{BASE_URL}}/api/v1/books/books/1/reviews/1/",
+                      "host": ["{{BASE_URL}}"],
+                      "path": [
+                        "api",
+                        "v1",
+                        "books",
+                        "books",
+                        "1",
+                        "reviews",
+                        "1",
+                        ""
+                      ],
+                      "query": [
+                        {
+                          "key": "",
+                          "value": null,
+                          "disabled": true
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Create",
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "formdata",
+                      "formdata": [
+                        {
+                          "key": "book",
+                          "value": "1",
+                          "type": "text"
+                        },
+                        {
+                          "key": "rating",
+                          "value": "5",
+                          "type": "text"
+                        }
+                      ]
+                    },
+                    "url": {
+                      "raw": "{{BASE_URL}}/api/v1/books/books/1/reviews/",
+                      "host": ["{{BASE_URL}}"],
+                      "path": [
+                        "api",
+                        "v1",
+                        "books",
+                        "books",
+                        "1",
+                        "reviews",
+                        ""
+                      ],
+                      "query": [
+                        {
+                          "key": "book",
+                          "value": "1",
+                          "disabled": true
+                        },
+                        {
+                          "key": "rating",
+                          "value": "5",
+                          "disabled": true
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Delete",
+                  "request": {
+                    "method": "DELETE",
+                    "header": [],
+                    "url": {
+                      "raw": "{{BASE_URL}}/api/v1/books/books/1/reviews/1/",
+                      "host": ["{{BASE_URL}}"],
+                      "path": [
+                        "api",
+                        "v1",
+                        "books",
+                        "books",
+                        "1",
+                        "reviews",
+                        "1",
+                        ""
+                      ]
+                    }
+                  },
+                  "response": []
+                }
+              ]
+            },
+            {
+              "name": "Retrieve",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/reviews/7/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "reviews", "7", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "List",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/reviews/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "reviews", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Partial Update",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "rating",
+                      "value": "2",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/reviews/7/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "reviews", "7", ""],
+                  "query": [
+                    {
+                      "key": "",
+                      "value": null,
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "rating",
+                      "value": "1",
+                      "type": "text"
+                    },
+                    {
+                      "key": "book",
+                      "value": "1",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/reviews/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "reviews", ""],
+                  "query": [
+                    {
+                      "key": "rating",
+                      "value": "3",
+                      "disabled": true
+                    },
+                    {
+                      "key": "book",
+                      "value": "1",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/reviews/7/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "reviews", "7", ""]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Categories",
+          "item": [
+            {
+              "name": "List",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/1/reviews/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "1", "reviews", ""]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Authors",
+          "item": [
+            {
+              "name": "Retrieve",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/books/1/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "books", "1", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Books",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/authors/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "authors", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "List",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/authors/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "authors", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Partial Update",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"categories\": [3, 4, \"2\", 4],\r\n    \"download_count\": \"sdf\",\r\n    \"author\": \"1\"\r\n\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/authors/1/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "authors", "1", ""],
+                  "query": [
+                    {
+                      "key": "",
+                      "value": null,
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "title",
+                      "value": "title",
+                      "type": "text"
+                    },
+                    {
+                      "key": "description",
+                      "value": "description",
+                      "type": "text"
+                    },
+                    {
+                      "key": "price",
+                      "value": "10",
+                      "type": "text"
+                    },
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": "/C:/Users/huauf/OneDrive/Desktop/df.pdf"
+                    },
+                    {
+                      "key": "format",
+                      "value": "PDF",
+                      "type": "text"
+                    },
+                    {
+                      "key": "published_date",
+                      "value": "2024-11-26",
+                      "type": "text"
+                    },
+                    {
+                      "key": "categories",
+                      "value": "1",
+                      "type": "text"
+                    },
+                    {
+                      "key": "categories",
+                      "value": "2",
+                      "type": "text"
+                    },
+                    {
+                      "key": "download_count",
+                      "value": "100",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/authors/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "authors", ""],
+                  "query": [
+                    {
+                      "key": "price",
+                      "value": "10",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Copy",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/books/1/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "books", "1", ""]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Orders",
+          "item": [
+            {
+              "name": "Retrieve",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/orders/1/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "orders", "1", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "List",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/orders/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "orders", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "title",
+                      "value": "title",
+                      "type": "text"
+                    },
+                    {
+                      "key": "description",
+                      "value": "description",
+                      "type": "text"
+                    },
+                    {
+                      "key": "price",
+                      "value": "10",
+                      "type": "text"
+                    },
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": "/C:/Users/huauf/OneDrive/Desktop/df.pdf"
+                    },
+                    {
+                      "key": "format",
+                      "value": "PDF",
+                      "type": "text"
+                    },
+                    {
+                      "key": "published_date",
+                      "value": "2024-11-26",
+                      "type": "text"
+                    },
+                    {
+                      "key": "categories",
+                      "value": "1",
+                      "type": "text"
+                    },
+                    {
+                      "key": "categories",
+                      "value": "2",
+                      "type": "text"
+                    },
+                    {
+                      "key": "download_count",
+                      "value": "100",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/orders/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "orders", ""],
+                  "query": [
+                    {
+                      "key": "price",
+                      "value": "10",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/orders/1/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "orders", "1", ""]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Cart Items",
+          "item": [
+            {
+              "name": "Retrieve",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/cart-items/1/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "cart-items", "1", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "List",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/cart-items/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "cart-items", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Partial Update",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"categories\": [3, 4, \"2\", 4],\r\n    \"download_count\": \"sdf\",\r\n    \"author\": \"1\"\r\n\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/cart-items/1/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "cart-items", "1", ""],
+                  "query": [
+                    {
+                      "key": "",
+                      "value": null,
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "book",
+                      "value": "5",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/cart-items/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "cart-items", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/books/cart-items/1/",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "books", "cart-items", "1", ""]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Retrieve",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/users/users/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "users", "users", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/users/users/me/",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "users", "users", "me", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/users/users/",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "users", "users", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Email",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/users/verify-email/ODU/cge6nb-3ad3f9de270e5d17277a3d982431625c/",
+              "host": ["{{BASE_URL}}"],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "verify-email",
+                "ODU",
+                "cge6nb-3ad3f9de270e5d17277a3d982431625c",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/users/logout/",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "users", "logout", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "email",
+                  "value": "hu.auf2000@gmail.com",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "A#123123",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/users/users/",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "users", "users", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "email",
+                  "value": "hu.auf2000@gmail.com",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "A#123123",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/users/login/",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "users", "login", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "email",
+                  "value": "hu.auf2000@gmail.com",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "A#123123",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/users/token/refresh/",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "users", "token", "refresh", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "email",
+                  "value": "hu.auf2000@gmail.com",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/users/password/reset/",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "users", "password", "reset", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Confirm Reset Password",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "new_password",
+                  "value": "A#123123",
+                  "type": "text"
+                },
+                {
+                  "key": "confirm_new_password",
+                  "value": "A#123123",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/users/password/reset/confirm/ODU/cgeey2-bd2fff4b79c993fae335317a5e90edcf/",
+              "host": ["{{BASE_URL}}"],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "password",
+                "reset",
+                "confirm",
+                "ODU",
+                "cgeey2-bd2fff4b79c993fae335317a5e90edcf",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "email",
+                  "value": "hu.auf2000@gmail.com",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "A#1231231",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/users/users/85/",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "users", "users", "85", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Partial Update",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "phone_number",
+                  "value": "+201094448435",
+                  "type": "text"
+                },
+                {
+                  "key": "name",
+                  "value": "Hussein Auf",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/users/users/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "users", "users", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "New Request",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "exec": [""]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "exec": [""]
+          }
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{ACCESS_TOKEN}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [""]
+      }
+    }
+  ]
+}

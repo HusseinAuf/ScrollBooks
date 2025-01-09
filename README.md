@@ -24,6 +24,10 @@ The backend consists of an API developed using Django and is integrated with sev
 - **Redis**: Used as the broker for Celery.
 - **PostgreSQL**: Used as the database for the backend.
 
+### Postman Collection
+
+- You can find the Postman collections for testing the API endpoints in the postman folder within the backend folder.
+
 ## Frontend
 
 > **Note:** The frontend is still under development, and is not yet completed.
