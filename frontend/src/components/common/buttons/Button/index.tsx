@@ -1,4 +1,5 @@
 import React from "react";
+import clsx from "clsx";
 
 interface ButtonProps {
   onClick?: (e: any) => void;
@@ -18,10 +19,14 @@ const Button: React.FC<ButtonProps> = ({
   disabled = false,
   icon: Icon,
 }) => {
+  const baseClassName =
+    "text-sm w-fit py-3 px-5 bg-mediumBlue hover:shadow-lg text-white font-bold rounded-full transition-all duration-300";
+  // className = baseClassName + " " + className;
+  className = clsx(baseClassName, className);
   return (
     <button
       onClick={onClick}
-      className={`text-md w-fit py-3 px-5 bg-mediumBlue hover:shadow-lg text-white font-bold rounded-full transition-all duration-300 ${className}`}
+      className={className}
       style={{
         opacity: disabled ? 0.5 : 1,
         ...style,

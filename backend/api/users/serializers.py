@@ -32,7 +32,11 @@ class UserSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
-class PasswordResetSerializer(serializers.Serializer):
+class GoogleAuthSerializer(serializers.Serializer):
+    google_code = serializers.CharField()
+
+
+class SendEmailSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
 

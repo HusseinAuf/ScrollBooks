@@ -14,7 +14,7 @@ import environ
 from datetime import timedelta
 from urllib.parse import urljoin
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Build paths inside the project like this: BASE_DIR / "subdir".
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Read environment variables
@@ -48,12 +48,12 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "rest_framework.authtoken",
     "corsheaders",
+    "django_filters",
+    "drf_spectacular",
+    # Apps
     "users.apps.UsersConfig",
     "books.apps.BooksConfig",
     "core.apps.CoreConfig",
-    "django_filters",
-    "drf_spectacular",
-    "phonenumber_field",
 ]
 
 MIDDLEWARE = [
@@ -143,8 +143,8 @@ CELERY_TASK_SOFT_TIME_LIMIT = 120 * 60
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
 # SMTP configuration
-EMAIL_BACKEND = env("EMAIL_BACKEND")
-# EMAIL_BACKEND = "core.custom_email_backend.CustomEmailBackend"
+# EMAIL_BACKEND = env("EMAIL_BACKEND")
+EMAIL_BACKEND = "core.custom_email_backend.CustomEmailBackend"
 EMAIL_HOST = env("EMAIL_HOST")
 EMAIL_USE_TLS = env("EMAIL_USE_TLS")
 EMAIL_PORT = env("EMAIL_PORT")
@@ -241,7 +241,7 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": True,
     "ALGORITHM": "HS256",
-    # 'SIGNING_KEY': SECRET_KEY,
+    # "SIGNING_KEY": SECRET_KEY,
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",
     "JWT_CLAIM": "jti",
@@ -264,6 +264,11 @@ JWT_AUTH_COOKIE_HTTPONLY = env.bool("JWT_AUTH_ACCESS_COOKIE_HTTPONLY", default=T
 JWT_AUTH_COOKIE_SECURE = env.bool("JWT_AUTH_ACCESS_COOKIE_SECURE", default=False)
 JWT_AUTH_COOKIE_SAMESITE = env.str("JWT_AUTH_ACCESS_COOKIE_SAMESITE", default="Lax")
 
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
+
+GOOGLE_CLIENT_ID = "1077906388464-s95grrp7bnu0rvpf82vsc51v1avcc1gh.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET = "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"
 
 STRIPE_PUBLIC_KEY = env("STRIPE_PUBLIC_KEY")
 STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")

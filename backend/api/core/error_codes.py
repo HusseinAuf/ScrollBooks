@@ -1,0 +1,2 @@
+class ErrorCodes:
+    USER_NOT_VERIFIED = "USER_NOT_VERIFIED"

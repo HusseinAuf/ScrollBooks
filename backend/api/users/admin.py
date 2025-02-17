@@ -7,7 +7,7 @@ from core.utils import dynamic_admin_readonly_fields
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    list_display = ("email", "name", "phone_number", "is_active")
+    list_display = ("email", "name", "phone_number", "is_verified")
     search_fields = ("email", "name")
     readonly_fields = dynamic_admin_readonly_fields(User, extra_fields=["last_login"])
     ordering = None
@@ -22,6 +22,7 @@ class UserAdmin(BaseUserAdmin):
             {
                 "fields": (
                     "is_active",
+                    "is_verified",
                     "is_staff",
                     "is_superuser",
                     "groups",
@@ -43,6 +44,7 @@ class UserAdmin(BaseUserAdmin):
         "is_staff",
         "is_superuser",
         "is_active",
+        "is_verified",
         "groups",
     )
     filter_horizontal = (

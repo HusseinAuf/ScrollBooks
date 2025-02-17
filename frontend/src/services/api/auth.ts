@@ -7,6 +7,12 @@ export const authService = {
     }),
   signup: async (data: object) =>
     await publicAxiosInstance.post("/api/v1/users/users/", data),
+  googleAuth: async (data: object) =>
+    await publicAxiosInstance.post("/api/v1/users/google-auth/", data, {
+      withCredentials: true,
+    }),
+  resendVerificationEmail: async (data: object) =>
+    await axiosInstance.post("/api/v1/users/resend-verification-email/", data),
   verifyEmail: async (id: string, token: string) =>
     await publicAxiosInstance.get(`/api/v1/users/verify-email/${id}/${token}/`),
   resetPassword: async (data: object) =>

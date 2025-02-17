@@ -1,15 +1,19 @@
 from django.db import models
 from core.utils import get_random_file_name
 from django.utils.translation import gettext_lazy as _
-from model_utils.models import TimeStampedModel
 from django.core.validators import MinValueValidator, MaxValueValidator
+from core.models import BaseModel
 
 
-class Author(TimeStampedModel):
+class Author(BaseModel):
+    def get_author_picture_upload_path(self, filename):
+        return "author-profile-pictures/" + get_random_file_name(filename)
+
     user = models.OneToOneField("users.User", on_delete=models.CASCADE, related_name="author")
     bio = models.TextField(blank=True)
     website = models.URLField(blank=True)
     date_of_birth = models.DateField(blank=True, null=True)
+    picture = models.ImageField(upload_to=get_author_picture_upload_path, blank=True, null=True)
 
     class Meta:
         ordering = ["-created", "user"]
@@ -34,9 +38,25 @@ class BookCategory(models.TextChoices):
     GRAPHIC_NOVELS = ("graphic_novels", _("Graphic Novels"))
     POETRY = ("poetry", _("Poetry"))
     CLASSICS = ("classics", _("Classics"))
+    EDUCATION = ("education", _("Education"))
+    HISTORY = ("history", _("History"))
+    ART = ("art", _("Art & Photography"))
+    SCIENCE = ("science", _("Science"))
+    RELIGION = ("religion", _("Religion/Spirituality"))
+    BUSINESS = ("business", _("Business & Economics"))
+    HEALTH = ("health", _("Health & Wellness"))
+    COOKING = ("cooking", _("Cooking/Food"))
 
 
-class Category(TimeStampedModel):
+class BookLanguage(models.TextChoices):
+    EN = ("en", "English")
+    FR = ("fr", "French")
+    DE = ("de", "German")
+    ES = ("es", "Spanish")
+    AR = ("ar", "Arabic")
+
+
+class Category(BaseModel):
     name = models.CharField(max_length=100, choices=BookCategory.choices, unique=True)
 
     class Meta:
@@ -47,7 +67,13 @@ class Category(TimeStampedModel):
         return self.name
 
 
-class Book(TimeStampedModel):
+class CurrencyType(models.TextChoices):
+    USD = "USD", ("USD")
+    EUR = "EUR", ("EUR")
+    GBP = "GBP", ("GBP")
+
+
+class Book(BaseModel):
     def get_book_file_uploaded_path(self, filename):
         return "book-files/" + get_random_file_name(filename)
 
@@ -59,10 +85,11 @@ class Book(TimeStampedModel):
     categories = models.ManyToManyField("books.Category", related_name="books")
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    # isbn = models.CharField(max_length=13, unique=True)
+    currency = models.CharField(max_length=10, choices=CurrencyType.choices, default=CurrencyType.USD.value)
     file = models.FileField(upload_to=get_book_file_uploaded_path)
     cover_image = models.ImageField(upload_to=get_cover_image_uploaded_path, blank=True, null=True)
     published_date = models.DateField(blank=True, null=True)
+    language = models.CharField(max_length=2, choices=BookLanguage.choices, default=BookLanguage.EN.value)
 
     class Meta:
         ordering = ["-created", "title"]
@@ -77,7 +104,7 @@ class OrderStatus(models.TextChoices):
     CANCELED = ("canceled", _("Canceled"))
 
 
-class Order(TimeStampedModel):
+class Order(BaseModel):
     user = models.ForeignKey("users.User", on_delete=models.CASCADE, related_name="orders")
     stripe_session_id = models.CharField(max_length=255, blank=True)
     stripe_session_url = models.URLField(max_length=500, blank=True)
@@ -93,7 +120,7 @@ class Order(TimeStampedModel):
         return f"Order {self.id} by {self.user.email}"
 
 
-class OrderItem(models.Model):
+class OrderItem(BaseModel):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="order_items")
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2)  # Price at the time of purchase
@@ -105,11 +132,11 @@ class OrderItem(models.Model):
         return f"{self.book.title} in Order {self.order.id}"
 
 
-class Review(TimeStampedModel):
+class Review(BaseModel):
     user = models.ForeignKey("users.User", related_name="reviews", on_delete=models.CASCADE)
     book = models.ForeignKey(Book, related_name="reviews", on_delete=models.CASCADE)
     rating = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(5)]
+        validators=[MinValueValidator(0), MaxValueValidator(5)]
     )  # Ensures rating is between 1 and 5
     comment = models.TextField(blank=True)
 
@@ -121,7 +148,7 @@ class Review(TimeStampedModel):
         return f"Review by {self.user.email} for {self.book.title}"
 
 
-class Cart(TimeStampedModel):
+class Cart(BaseModel):
     user = models.OneToOneField("users.User", on_delete=models.CASCADE, unique=True, related_name="cart")
 
     def __str__(self):
@@ -132,7 +159,7 @@ class Cart(TimeStampedModel):
         return sum(item.price for item in self.cart_items.all())
 
 
-class CartItem(TimeStampedModel):
+class CartItem(BaseModel):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="cart_items")
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
 

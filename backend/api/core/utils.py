@@ -58,3 +58,10 @@ def render_to_string_global_context(template_name, context={}, request=None, usi
 
 def is_running_tests():
     return "PYTEST_CURRENT_TEST" in os.environ
+
+
+def get_object_or_none(model, **kwargs):
+    try:
+        return model.objects.get(**kwargs)
+    except model.DoesNotExist:
+        return None

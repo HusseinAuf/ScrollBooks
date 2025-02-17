@@ -4,8 +4,8 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin,
 )
-from model_utils.models import TimeStampedModel
 from django.utils.translation import gettext_lazy as _
+from core.models import BaseModel
 
 
 class UserManager(BaseUserManager):
@@ -20,21 +20,22 @@ class UserManager(BaseUserManager):
 
     def create_superuser(self, email, password=None, **extra_fields):
         user = self.create_user(email, password, **extra_fields)
-        user.is_active = True
+        user.is_verified = True
         user.is_staff = True
         user.is_superuser = True
         user.save(using=self._db)
         return user
 
 
-class User(AbstractBaseUser, PermissionsMixin, TimeStampedModel):
+class User(BaseModel, AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=254, verbose_name=_("email address"), unique=True)
     name = models.CharField(max_length=150, blank=True)
     phone_number = models.CharField(max_length=30, blank=True)
     favorite_books = models.ManyToManyField("books.Book", blank=True, related_name="favorited_by")
     library = models.ManyToManyField("books.Book", blank=True, related_name="users_with_library")
-    is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    is_verified = models.BooleanField(default=False)  # Tracks email verification status
 
     objects = UserManager()
     USERNAME_FIELD = "email"

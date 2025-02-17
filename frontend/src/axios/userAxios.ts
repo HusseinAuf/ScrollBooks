@@ -41,7 +41,8 @@ axiosInstance.interceptors.response.use(
         }
       } catch (refreshError) {
         console.error("Error refreshing token:", refreshError);
-        window.location.href = "/login";
+        localStorage.removeItem("access_token");
+        window.location.href = "/signin";
       }
     }
     return Promise.reject(error);

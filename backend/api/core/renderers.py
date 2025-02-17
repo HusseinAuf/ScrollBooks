@@ -58,10 +58,12 @@ class BaseJSONRenderer(JSONRenderer):
         return success_response
 
     def get_error_response(self, data, status_code):
+
         error_response = {
             "status_code": status_code,
             "detail": "Fail",
             "error": data,
+            "code": data.pop("code") if "code" in data else "",
         }
         if isinstance(data, dict):
             error_response["detail"] = data.pop("message", None) or data.pop("detail", None) or error_response["detail"]

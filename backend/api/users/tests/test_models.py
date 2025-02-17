@@ -19,7 +19,7 @@ class UserModelTestCase(TestCase):
         user = User.objects.create_user(**self.user_data)
         self.assertEqual(user.email, self.user_data["email"])
         self.assertTrue(user.check_password(self.user_data["password"]))
-        self.assertFalse(user.is_active)
+        self.assertFalse(user.is_verified)
         self.assertFalse(user.is_staff)
         self.assertFalse(user.is_superuser)
 
@@ -28,7 +28,7 @@ class UserModelTestCase(TestCase):
         superuser = User.objects.create_superuser(**self.user_data)
         self.assertEqual(superuser.email, self.user_data["email"])
         self.assertTrue(superuser.check_password(self.user_data["password"]))
-        self.assertTrue(superuser.is_active)
+        self.assertTrue(superuser.is_verified)
         self.assertTrue(superuser.is_staff)
         self.assertTrue(superuser.is_superuser)
 

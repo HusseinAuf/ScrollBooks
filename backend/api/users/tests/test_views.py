@@ -7,6 +7,7 @@ from core.tests.tests import BaseAPITestCase
 from users.tests.factories import UserFactory
 from urllib.parse import urlencode
 from books.tests.factories import AuthorFactory
+from users.utils import generate_uid_and_token
 
 
 class UserViewSetTests(BaseAPITestCase):
@@ -93,9 +94,8 @@ class LoginViewTests(BaseAPITestCase):
 class VerifyEmailTests(BaseAPITestCase):
     def setUp(self):
         super().setUp()
-        self.user = UserFactory(is_active=False)
-        self.uid = urlsafe_base64_encode(force_bytes(self.user.pk))
-        self.token = PasswordResetTokenGenerator().make_token(self.user)
+        self.user = UserFactory(is_verified=False)
+        self.uid, self.token = generate_uid_and_token(self.user)
 
     def test_verify_email_success(self):
         """Test email verification success."""
@@ -104,7 +104,7 @@ class VerifyEmailTests(BaseAPITestCase):
         data = response.json()
         self.assertStatusCode(data, 200)
         self.user.refresh_from_db()
-        self.assertTrue(self.user.is_active)
+        self.assertTrue(self.user.is_verified)
 
     def test_verify_email_invalid_token(self):
         """Test email verification with an invalid token."""
@@ -161,8 +161,7 @@ class PasswordResetConfirmViewTests(BaseAPITestCase):
     def setUp(self):
         super().setUp()
         self.user = UserFactory()
-        self.uid = urlsafe_base64_encode(force_bytes(self.user.pk))
-        self.token = PasswordResetTokenGenerator().make_token(self.user)
+        self.uid, self.token = generate_uid_and_token(self.user)
 
     def test_password_reset_confirm(self):
         """Test password reset confirmation."""

@@ -12,7 +12,7 @@ class UserFactory(DjangoModelFactory):
     password = factory.PostGenerationMethodCall("set_password", "defaultpassword")
     name = Faker("name")
     phone_number = Faker("phone_number")
-    is_active = True
+    is_verified = True
 
     @factory.post_generation
     def favorite_books(self, create, extracted, **kwargs):

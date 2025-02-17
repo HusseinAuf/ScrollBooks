@@ -75,7 +75,7 @@ class ReviewFactory(DjangoModelFactory):
 
     user = SubFactory(UserFactory)
     book = SubFactory(BookFactory)
-    rating = Faker("random_int", min=1, max=5)
+    rating = Faker("random_int", min=0, max=5)
     comment = Faker("text")
 
 

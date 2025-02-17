@@ -10,6 +10,7 @@ from books.models import Cart
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from users.utils import generate_uid_and_token
 
 
 @receiver(post_migrate)
@@ -24,9 +25,8 @@ def perform_post_migrate_actions(sender, **kwargs):
 @receiver(post_save, sender=User)
 def perform_post_save_user(sender, instance, created, **kwargs):
     # send verification email
-    if created and not instance.is_active:
-        uid = urlsafe_base64_encode(force_bytes(instance.pk))
-        token = PasswordResetTokenGenerator().make_token(instance)
+    if created and not instance.is_verified:
+        uid, token = generate_uid_and_token(instance)
         send_verification_email(instance, uid, token)
 
     # create cart

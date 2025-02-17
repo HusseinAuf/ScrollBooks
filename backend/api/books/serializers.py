@@ -15,6 +15,7 @@ from django.conf import settings
 import stripe
 from rest_framework.exceptions import ValidationError
 from django.db import transaction
+from core.utils import get_object_or_none
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -38,16 +39,25 @@ class CategorySerializer(BaseModelSerializer):
 
 
 class BookSerializer(BaseModelSerializer):
+    from users.serializers import UserSerializer
+
+    user = UserSerializer(source="author.user", read_only=True)
+    categories = CategorySerializer(many=True, read_only=True)
+    review_count = serializers.IntegerField(read_only=True)
+    average_rating = serializers.FloatField(read_only=True)
+    my_review = serializers.SerializerMethodField()
+
     class Meta:
         model = Book
         fields = "__all__"
         read_only_fields = ["author"]
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data["categories"] = CategorySerializer(instance.categories, many=True).data
-        data["author"] = AuthorSerializer(instance.author).data
-        return data
+    def get_my_review(self, obj):
+        """Combine comment and rating into a dictionary"""
+        if not obj.my_review_comment and not obj.my_review_rating:
+            return None
+
+        return {"id": obj.my_review_id, "comment": obj.my_review_comment, "rating": obj.my_review_rating}
 
 
 class OrderItemSerializer(BaseModelSerializer):
@@ -141,7 +151,7 @@ class ReviewSerializer(BaseModelSerializer):
     class Meta:
         model = Review
         fields = "__all__"
-        read_only_fields = ["user"]
+        read_only_fields = ["user", "book"]
 
     def to_representation(self, instance):
         from users.serializers import UserSerializer

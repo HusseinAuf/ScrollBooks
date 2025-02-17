@@ -36,6 +36,10 @@ import stripe
 from rest_framework.exceptions import ValidationError
 from django.db import transaction
 from collections import OrderedDict
+from django.db.models import Count, Avg, Value, Subquery, OuterRef
+from django.db.models.functions import Coalesce
+from core.utils import get_object_or_none
+
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -57,6 +61,26 @@ class BookViewSet(BaseViewSet):
     filterset_class = BookFilter
     permission_relation = "author.user.pk"
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        queryset = queryset.annotate(
+            review_count=Count("reviews"), average_rating=Coalesce(Avg("reviews__rating"), Value(0.0))
+        )
+
+        # Get user review of each book
+        user_review = Review.objects.filter(book=OuterRef("pk"), user=self.request.user).values(
+            "id", "comment", "rating"
+        )
+
+        queryset = queryset.annotate(
+            my_review_id=Subquery(user_review.values("id")),
+            my_review_comment=Subquery(user_review.values("comment")),
+            my_review_rating=Subquery(user_review.values("rating")),
+        )
+
+        return queryset
+
     def perform_create(self, serializer):
         serializer.save(author=self.request.user.author)
 
@@ -73,8 +97,12 @@ class ReviewViewSet(BaseViewSet):
             return queryset.filter(book__id=self.kwargs.get("book_pk"))
         return queryset
 
+    def get_object(self):
+        return super().get_object()
+
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        book = get_object_or_none(Book, pk=self.kwargs.get("book_pk"))  # Ensure the book exists
+        serializer.save(user=self.request.user, **({"book": book} if book else {}))
 
 
 class OrderViewSet(BaseViewSet, NonUpdatableViewSet, NonDeletableViewSet):

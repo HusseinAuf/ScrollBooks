@@ -1,17 +1,13 @@
-import Navbar from "../components/layout/Navbar";
-import Footer from "../components/layout/Footer";
-import useUserContext from "../contexts/UserContext";
-import { ToastContainer } from "react-toastify";
+import BaseLayout from "./BaseLayout";
+import { Outlet } from "react-router-dom";
 
-const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useUserContext();
+const MainLayout: React.FC = () => {
   return (
-    <div className="min-w-screen">
-      <ToastContainer />
-      {user && <Navbar />}
-      <main>{children}</main>
-      <Footer />
-    </div>
+    <BaseLayout>
+      <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-24 py-4 sm:py-6 md:py-8">
+        <Outlet />
+      </div>
+    </BaseLayout>
   );
 };
 

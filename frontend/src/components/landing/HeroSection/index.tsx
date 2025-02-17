@@ -14,7 +14,7 @@ const HeroSection: React.FC = () => {
   }, []);
 
   const handleGetStarted = () => {
-    navigate("/signup");
+    navigate("/signin");
   };
 
   return (
@@ -33,7 +33,7 @@ const HeroSection: React.FC = () => {
             transition: "opacity 0.6s ease-in, transform 0.6s ease-in",
           }}
         />
-        <h1 className="mt-6 text-4xl font-bold">Welcome to ScrollBooks</h1>
+        <h1 className="mt-6 text-4xl font-bold">Welcome to ScrollBooks!</h1>
         <p className="mt-4 text-lg bg-darkBlue">
           Discover, read, and explore a world of e-books at your fingertips.
         </p>

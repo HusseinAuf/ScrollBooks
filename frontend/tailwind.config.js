@@ -10,6 +10,9 @@ module.exports = {
         lightBlue: "#00b4d8",
         xLightBlue: "#90e0ef",
       },
+      screens: {
+        xs: "375px",
+      },
     },
   },
   variants: {

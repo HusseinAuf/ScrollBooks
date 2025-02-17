@@ -9,25 +9,21 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { signinSchema } from "../../validations/signin";
 import { authService } from "../../services/api/auth";
 import { showToast } from "../../utils/toast";
-import LoadingPage from "../../components/common/Loading/LoadingPage";
+import LoadingPage from "../../components/common/LoadingPages/LoadingPage";
+import { useNavigate } from "react-router-dom";
 
 const Signin: React.FC = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
+    getValues,
   } = useForm({
     resolver: yupResolver(signinSchema), // Integrate Yup with React Hook Form
   });
   const { setAccessToken } = useUserContext();
   const [isLoading, setIsLoading] = useState(false);
-
-  React.useEffect(() => {
-    if (errors && Object.keys(errors).length === 0) {
-      return;
-    }
-    // validationErrorToast(errors);
-  }, [errors]);
 
   const handleSignin = async (formData: object) => {
     try {
@@ -37,25 +33,33 @@ const Signin: React.FC = () => {
       localStorage.setItem("access_token", token);
       setAccessToken(token);
       showToast("Sign In succeeded");
-      // const succeeded = await signin(formData);
-      // if (succeeded) {
-      //   setCheckInbox(true);
-      // }
-    } catch (error) {
-      /**/
+    } catch (err: any) {
+      const code = err?.response.data.code;
+      if (code === "USER_NOT_VERIFIED") {
+        navigate(`/send-verify-email?email=${getValues("email")}`);
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handlegooglelogin = useGoogleLogin({
-    onSuccess: (response) => {
-      console.log(response);
-      // Handle login success (e.g., send token to backend)
+  const handlegoogleAuth = useGoogleLogin({
+    onSuccess: async (googleResponse) => {
+      console.log(googleResponse);
+      try {
+        const response = await authService.googleAuth({
+          google_code: googleResponse.code,
+        });
+        console.log(response);
+      } catch (err) {
+        /**/
+      }
     },
     onError: () => {
       console.error("Login Failed");
     },
+    flow: "auth-code",
+    scope: "openid email profile",
   });
 
   return isLoading ? (
@@ -101,13 +105,19 @@ const Signin: React.FC = () => {
                     {errors.password?.message}
                   </p>
                 )}
+                <Link
+                  to="/reset-password"
+                  className="mt-1 text-sm font-semibold text-xLightBlue"
+                >
+                  Forgot Password?
+                </Link>
               </div>
               <Button type="submit">Submit</Button>
             </form>
           </div>
           <div className="font-bold">OR</div>
           <div>
-            <Button onClick={() => handlegooglelogin()} icon={FaGoogle}>
+            <Button onClick={() => handlegoogleAuth()} icon={FaGoogle}>
               Sign in with Google
             </Button>
           </div>

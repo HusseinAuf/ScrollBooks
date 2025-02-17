@@ -5,11 +5,7 @@ from core.views import (
     NonListableViewSet,
     NonRetrievableViewSet,
 )
-from users.serializers import (
-    UserSerializer,
-    PasswordResetConfirmSerializer,
-    PasswordResetSerializer,
-)
+from users.serializers import UserSerializer, PasswordResetConfirmSerializer, SendEmailSerializer, GoogleAuthSerializer
 from users.models import User
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -22,7 +18,7 @@ from users.authentication import set_jwt_cookies, unset_jwt_cookies
 from rest_framework.decorators import action
 from django.utils.translation import gettext_lazy as _
 from users.permissions import UserPermissions
-from users.utils import validate_onetime_token_and_get_user
+from users.utils import validate_onetime_token_and_get_user, generate_uid_and_token, generate_tokens_for_user
 from django.shortcuts import get_object_or_404
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -33,6 +29,15 @@ from books.serializers import BookSerializer
 from books.models import Book
 from django.db.models import Q
 from rest_framework.permissions import AllowAny
+from users.emails import send_verification_email
+from google.auth.transport.requests import Request as GoogleRequest
+from google.oauth2 import id_token
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.conf import settings
+import requests
+from datetime import datetime
+from users.services.google_auth import GoogleAuthService
+from core.error_codes import ErrorCodes
 
 
 class UserViewSet(BaseViewSet, NonDeletableViewSet, NonListableViewSet, NonRetrievableViewSet):
@@ -47,10 +52,13 @@ class UserViewSet(BaseViewSet, NonDeletableViewSet, NonListableViewSet, NonRetri
     def get_queryset(self):
         return super().get_queryset().filter(Q(id=self.request.user.id) | Q(author__isnull=False))
 
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
     @action(detail=False, methods=["get"], url_name="me", url_path="me")
     def me(self, request):
         serializer = self.get_serializer(request.user)
-        return Response(serializer.data)
+        return Response(serializer.data, status=200)
 
 
 class BaseUserGenericAPIView(generics.GenericAPIView):
@@ -65,17 +73,64 @@ class BaseUserGenericAPIView(generics.GenericAPIView):
 class LoginView(TokenObtainPairView, BaseUserGenericAPIView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
+
+        # check if the user is verified
+        if not response.data["user"]["is_verified"]:
+            return Response({"detail": "User is not verified.", "code": ErrorCodes.USER_NOT_VERIFIED}, status=403)
+
         response.data["access_token"] = response.data["access"]
         set_jwt_cookies(response, response.data.pop("access"), response.data.pop("refresh"))
+        return response
+
+
+class GoogleAuthView(BaseUserGenericAPIView):
+    serializer_class = GoogleAuthSerializer
+
+    def post(self, request, *args, **kwargs):
+        """
+        Handles both Google Login & Signup.
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        google_code = serializer.validated_data["google_code"]
+
+        tokens = GoogleAuthService.exchange_code_for_tokens(google_code)
+        id_info = GoogleAuthService.extract_user_info(tokens["id_token"])
+        email = id_info.get("email")
+        name = id_info.get("given_name", "") + id_info.get("family_name", "")
+
+        # Login or Signup
+        user, created = GoogleAuthService.get_or_create_user(email, name)
+
+        access_token, refresh_token = generate_tokens_for_user(user)
+        response_data = {"access_token": access_token, "user": UserSerializer(user).data, "created": created}
+
+        response = Response(response_data, status=200)
+        set_jwt_cookies(response, access_token, refresh_token)
+
         return response
 
 
 class VerifyEmail(BaseUserGenericAPIView):
     def get(self, request, uidb64, token, *args, **kwargs):
         user = validate_onetime_token_and_get_user(uidb64, token)
-        user.is_active = True
+        user.is_verified = True
         user.save()
         return Response(status=status.HTTP_200_OK)
+
+
+class ResendVerificationEmail(BaseUserGenericAPIView):
+    serializer_class = SendEmailSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = get_object_or_404(User, email=serializer.data["email"])
+        if user.is_verified:
+            return Response({"detail": "Email is already verified"}, status=400)
+        uid, token = generate_uid_and_token(user)
+        send_verification_email(user, uid, token)
+        return Response(status=200)
 
 
 class LogoutView(BaseUserGenericAPIView):
@@ -97,18 +152,15 @@ class TokenRefreshView(JwtTokenRefreshView, BaseUserGenericAPIView):
 
 
 class PasswordResetView(BaseUserGenericAPIView):
-    serializer_class = PasswordResetSerializer
+    serializer_class = SendEmailSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
         user = get_object_or_404(User, email=serializer.data["email"])
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
-        token = PasswordResetTokenGenerator().make_token(user)
-
+        uid, token = generate_uid_and_token(user)
         send_reset_password_email(user, uid, token)
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=200)
 
 
 class PasswordResetConfirmView(BaseUserGenericAPIView):
