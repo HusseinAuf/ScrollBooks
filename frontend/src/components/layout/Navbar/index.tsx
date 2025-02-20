@@ -39,12 +39,6 @@ const Navbar: React.FC = () => {
       ) {
         setIsDropdownOpen(false);
       }
-      // if (
-      //   searchRef.current &&
-      //   !searchRef.current.contains(event.target as Node)
-      // ) {
-      //   setIsSearchExpanded(false);
-      // }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -56,7 +50,7 @@ const Navbar: React.FC = () => {
   return (
     <nav className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16 gap-10">
+        <div className="flex justify-between items-center h-16 gap-6">
           {/* Logo (Hidden when search is expanded) */}
           <div className="flex items-center">
             <Link to="/">
@@ -77,7 +71,7 @@ const Navbar: React.FC = () => {
               >
                 {!isSearchExpanded ? (
                   <svg
-                    className="h-5 w-5"
+                    className="h-4 w-4"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -139,7 +133,7 @@ const Navbar: React.FC = () => {
 
             {/* User Profile Dropdown (Visible on All Screens) */}
             <div className="flex items-center">
-              <div className="ml-4 relative" ref={dropdownRef}>
+              <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={toggleDropdown}
                   className="flex items-center text-sm focus:outline-none text-gray-800 hover:text-mediumBlue"

@@ -23,11 +23,17 @@ class UserManager(BaseUserManager):
         user.is_verified = True
         user.is_staff = True
         user.is_superuser = True
+        print("user.is_verified: ", user.is_verified)
+        print("user.is_staff: ", user.is_staff)
+        print("user.is_superuser: ", user.is_superuser)
         user.save(using=self._db)
+        print("user.is_verified: ", user.is_verified)
+        print("user.is_staff: ", user.is_staff)
+        print("user.is_superuser: ", user.is_superuser)
         return user
 
 
-class User(BaseModel, AbstractBaseUser, PermissionsMixin):
+class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     email = models.EmailField(max_length=254, verbose_name=_("email address"), unique=True)
     name = models.CharField(max_length=150, blank=True)
     phone_number = models.CharField(max_length=30, blank=True)

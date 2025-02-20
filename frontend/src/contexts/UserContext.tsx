@@ -7,7 +7,9 @@ const UserContext = createContext<any>(null);
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [accessToken, setAccessToken] = useState("");
+  const [accessToken, setAccessToken] = useState(
+    localStorage.getItem("access_token") || ""
+  );
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
@@ -17,24 +19,23 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   const refreshAccessToken = () => {
     /**/
   };
-
+  const fetchUser = async () => {
+    try {
+      const response = await userService.getMyProfile();
+      setUser(response.data);
+    } catch {
+      /**/
+    }
+  };
+  const fetchCartItems = async () => {
+    try {
+      const response = await cartAPI.getMyCart();
+      setCartItems(response.data);
+    } catch {
+      /**/
+    }
+  };
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await userService.getMyProfile();
-        setUser(response.data.data);
-      } catch {
-        /**/
-      }
-    };
-    const fetchCartItems = async () => {
-      try {
-        const response = await cartAPI.getMyCart();
-        setCartItems(response.data.data);
-      } catch {
-        /**/
-      }
-    };
     fetchUser();
     fetchCartItems();
   }, []);
@@ -42,8 +43,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   const contextData = {
     user,
     setUser,
+    fetchUser,
     cartItems,
     setCartItems,
+    fetchCartItems,
     accessToken,
     setAccessToken,
   };

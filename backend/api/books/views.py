@@ -24,7 +24,6 @@ from books.serializers import (
     ReviewSerializer,
     CategorySerializer,
     OrderSerializer,
-    CreateOrderSerializer,
     CartItemSerializer,
 )
 from core.permissions import BasePermissions
@@ -36,7 +35,7 @@ import stripe
 from rest_framework.exceptions import ValidationError
 from django.db import transaction
 from collections import OrderedDict
-from django.db.models import Count, Avg, Value, Subquery, OuterRef
+from django.db.models import Count, Avg, Value, Subquery, OuterRef, Exists
 from django.db.models.functions import Coalesce
 from core.utils import get_object_or_none
 
@@ -63,16 +62,17 @@ class BookViewSet(BaseViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-
+        user = self.request.user
         queryset = queryset.annotate(
-            review_count=Count("reviews"), average_rating=Coalesce(Avg("reviews__rating"), Value(0.0))
+            review_count=Count("reviews"),
+            average_rating=Coalesce(Avg("reviews__rating"), Value(0.0)),
+            is_in_my_cart=Exists(CartItem.objects.filter(cart__user=user, book=OuterRef("id"))),
+            is_in_my_library=Exists(user.library.filter(id=OuterRef("id"))),
+            is_in_my_favorite=Exists(user.favorite_books.filter(id=OuterRef("id"))),
         )
 
         # Get user review of each book
-        user_review = Review.objects.filter(book=OuterRef("pk"), user=self.request.user).values(
-            "id", "comment", "rating"
-        )
-
+        user_review = Review.objects.filter(book=OuterRef("pk"), user=user).values("id", "comment", "rating")
         queryset = queryset.annotate(
             my_review_id=Subquery(user_review.values("id")),
             my_review_comment=Subquery(user_review.values("comment")),
@@ -111,16 +111,11 @@ class OrderViewSet(BaseViewSet, NonUpdatableViewSet, NonDeletableViewSet):
     serializer_class = OrderSerializer
     permission_relation = "user.pk"
 
-    def get_serializer_class(self):
-        if self.action in ["create"]:
-            return CreateOrderSerializer
-        return super().get_serializer_class()
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=201)
+    # def create(self, request, *args, **kwargs):
+    #     serializer = self.get_serializer(data=request.data)
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save()
+    #     return Response(serializer.data, status=201)
 
 
 class OrderItemViewSet(BaseViewSet, NonUpdatableViewSet, NonDeletableViewSet):

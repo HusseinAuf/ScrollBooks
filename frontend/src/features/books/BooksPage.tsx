@@ -5,7 +5,7 @@ import BookList from "./components/BookList/BookList";
 
 const BooksPage: React.FC = () => {
   const { id } = useParams();
-  return id ? <BookDetail bookID={id} /> : <BookList />;
+  return id ? <BookDetail bookID={Number(id)} /> : <BookList />;
 };
 
 export default BooksPage;

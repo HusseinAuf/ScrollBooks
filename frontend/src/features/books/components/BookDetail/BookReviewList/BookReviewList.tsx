@@ -6,7 +6,7 @@ import { reviewService } from "../../../../../services/api/reviews";
 import Loading from "../../../../../components/common/Loading/Loading";
 
 interface ReviewProps {
-  bookID: string;
+  bookID: number;
 }
 
 const BookReviewList: React.FC<ReviewProps> = ({ bookID }) => {
@@ -16,12 +16,12 @@ const BookReviewList: React.FC<ReviewProps> = ({ bookID }) => {
     queryKey: ["reviews", bookID, page],
     queryFn: () => reviewService.getReviews(bookID, page),
     select: (data: any) => ({
-      data: data?.data?.data || [],
-      pageCount: data?.data?.pagination?.last || 1,
+      data: data?.data || [],
+      pageCount: data?.pagination?.last || 1,
     }),
     placeholderData: keepPreviousData,
   });
-  console.log(data?.data);
+
   return (
     <div className="relative flex flex-col gap-6">
       {data?.data && !data.data?.length ? (

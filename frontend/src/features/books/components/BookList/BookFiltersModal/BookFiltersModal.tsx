@@ -18,7 +18,7 @@ const BookFiltersModal: React.FC<BookFilterModalProps> = ({
   filters,
 }) => {
   const { categories, languages } = useCommonDataContext();
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+  const [selectedCategories, setSelectedCategories] = useState<number[]>(
     filters.categories
   );
   const [selectedRating, setSelectedRating] = useState<number>(filters.rating);
@@ -26,7 +26,7 @@ const BookFiltersModal: React.FC<BookFilterModalProps> = ({
     filters.language
   );
 
-  const handleCategoryChange = (categoryID: string) => {
+  const handleCategoryChange = (categoryID: number) => {
     setSelectedCategories((prev) =>
       prev.includes(categoryID)
         ? prev.filter((c) => c !== categoryID)

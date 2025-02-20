@@ -28,9 +28,9 @@ const Signup: React.FC = () => {
     try {
       setIsLoading(true);
       const response = await authService.signup(formData);
-      setUser(response.data.data);
+      setUser(response.data);
       showToast("Welcome to ScrollBooks!");
-      navigate(`/send-verify-email?email=${response.data.data.email}`);
+      navigate(`/send-verify-email?email=${response.data.email}`);
     } catch (error) {
       showToast("Failed to Sign Up", "error");
     } finally {
@@ -40,12 +40,10 @@ const Signup: React.FC = () => {
 
   const handlegoogleAuth = useGoogleLogin({
     onSuccess: async (googleResponse) => {
-      console.log(googleResponse);
       try {
         const response = await authService.googleAuth({
           google_code: googleResponse.code,
         });
-        console.log(response);
       } catch (err) {
         /**/
       }

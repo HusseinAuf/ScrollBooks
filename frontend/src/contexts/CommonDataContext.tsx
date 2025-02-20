@@ -10,11 +10,7 @@ export const CommonDataProvider: React.FC<{ children: React.ReactNode }> = ({
   const { data: categories } = useQuery({
     queryKey: ["categories"],
     queryFn: () => categoryService.getCategories(),
-    select: (data: any) =>
-      data?.data?.data?.map((item: any) => ({
-        id: String(item.id),
-        ...item,
-      })) || [],
+    select: (data: any) => data?.data || [],
   });
 
   const languages = [

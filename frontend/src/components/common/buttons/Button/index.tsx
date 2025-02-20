@@ -19,18 +19,16 @@ const Button: React.FC<ButtonProps> = ({
   disabled = false,
   icon: Icon,
 }) => {
-  const baseClassName =
-    "text-sm w-fit py-3 px-5 bg-mediumBlue hover:shadow-lg text-white font-bold rounded-full transition-all duration-300";
+  const baseClassName = `text-sm w-fit py-3 px-5 hover:shadow-lg text-white font-bold rounded-full transition-all duration-300 ${
+    disabled ? "bg-darkBlue" : "bg-mediumBlue"
+  }`;
   // className = baseClassName + " " + className;
   className = clsx(baseClassName, className);
   return (
     <button
       onClick={onClick}
       className={className}
-      style={{
-        opacity: disabled ? 0.5 : 1,
-        ...style,
-      }}
+      style={style}
       type={type}
       disabled={disabled}
     >

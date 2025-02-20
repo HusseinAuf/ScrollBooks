@@ -7,7 +7,9 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { UserProvider } from "./contexts/UserContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { CommonDataProvider } from "./contexts/CommonDataContext";
+import { BookProvider } from "./contexts/BookContext";
 import { UIProvider } from "./contexts/UIContext";
+import { keepPreviousData } from "@tanstack/react-query";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -18,13 +20,14 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false, // Prevents refetching when window regains focus
       select: (data: any) => {
-        return data?.data?.pagination
+        return data?.pagination
           ? {
-              data: data?.data?.data || [],
-              pageCount: data?.data?.pagination?.last || 1,
+              data: data?.data || [],
+              pageCount: data?.pagination?.last || 1,
             }
-          : data?.data?.data || null;
+          : data?.data || null;
       },
+      placeholderData: keepPreviousData,
     },
   },
 });
@@ -35,9 +38,13 @@ root.render(
       <CommonDataProvider>
         <UIProvider>
           <UserProvider>
-            <GoogleOAuthProvider clientId="1077906388464-s95grrp7bnu0rvpf82vsc51v1avcc1gh.apps.googleusercontent.com">
-              <App />
-            </GoogleOAuthProvider>
+            <BookProvider>
+              <GoogleOAuthProvider
+                clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID || ""}
+              >
+                <App />
+              </GoogleOAuthProvider>
+            </BookProvider>
           </UserProvider>
         </UIProvider>
       </CommonDataProvider>

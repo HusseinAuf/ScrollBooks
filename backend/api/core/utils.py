@@ -6,7 +6,6 @@ from django.utils.translation import gettext_lazy as _
 import logging
 from django.template.loader import render_to_string
 
-
 # Setup logging
 logger = logging.getLogger(__name__)
 

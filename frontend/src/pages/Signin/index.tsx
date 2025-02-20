@@ -29,7 +29,7 @@ const Signin: React.FC = () => {
     try {
       setIsLoading(true);
       const response = await authService.signin(formData);
-      const token = response.data.data.access_token;
+      const token = response.data.access_token;
       localStorage.setItem("access_token", token);
       setAccessToken(token);
       showToast("Sign In succeeded");

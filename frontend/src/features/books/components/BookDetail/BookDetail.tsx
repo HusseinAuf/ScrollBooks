@@ -1,39 +1,66 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { booksAPI } from "../../../../services/api/books";
+import { bookAPI } from "../../../../services/api/books";
 import { reviewService } from "../../../../services/api/reviews";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import EditableStarRating from "../../../../components/shared/StartRating/EditableStarRating/EditableStarRating";
 import Button from "../../../../components/common/buttons/Button";
-import { FaHeartCirclePlus } from "react-icons/fa6";
+import { FaDatabase, FaHeartCirclePlus } from "react-icons/fa6";
 import { FaShoppingCart } from "react-icons/fa";
 import BookReviewList from "./BookReviewList/BookReviewList";
 import AddReviewModal from "./AddReviewModal/AddReviewModal";
 import useCommonDataContext from "../../../../contexts/CommonDataContext";
+import { cartAPI } from "../../../../services/api/cartItems";
+import useUserContext from "../../../../contexts/UserContext";
+import { useQueryClient } from "@tanstack/react-query";
+import useBookContext from "../../../../contexts/BookContext";
+import Loading from "../../../../components/common/Loading/Loading";
 
 interface BookDetailProps {
-  bookID: string;
+  bookID: number;
 }
 
 const BookDetail: React.FC<BookDetailProps> = ({ bookID }) => {
+  const queryClient = useQueryClient();
+  const { book, setBook } = useBookContext();
   const { currenciesMap } = useCommonDataContext();
+  const { cartItems, setCartItems, fetchCartItems } = useUserContext();
   const [isAddReviewModalOpen, setIsAddReviewModalOpen] = useState(false);
-  const {
-    data: book,
-    isLoading: isLoadingBook,
-    isFetching: isFetchingBook,
-    isError: isErrorBook,
-    error: errorBook,
-    refetch,
-  } = useQuery({
+  const { data, isLoading, isFetching, isError, error, refetch } = useQuery({
     queryKey: ["books", bookID],
-    queryFn: () => booksAPI.getBook(bookID),
-    select: (data: any) => data?.data?.data || null,
+    queryFn: () => bookAPI.getBook(bookID),
   });
 
-  const handleAddToCart = () => {
-    alert(`Added ${book?.title} to cart!`);
+  useEffect(() => {
+    if (data) {
+      setBook(data);
+    }
+  }, [data]);
+
+  const handleAddToCart = async (bookID: number) => {
+    try {
+      const response = await cartAPI.createCartItem({ book_id: bookID });
+      setCartItems((prevCartItems: any) => [...prevCartItems, response.data]);
+    } catch {
+      /**/
+    }
+  };
+
+  const handleRemoveFromCart = async (bookID: number) => {
+    try {
+      const cartItem = cartItems.filter(
+        (item: any) => item.book.id === bookID
+      )[0];
+      await cartAPI.deleteCartItem(cartItem.id);
+      setCartItems((prevCartItems: any) =>
+        prevCartItems.filter(
+          (prevCartItem: any) => prevCartItem.id !== cartItem.id
+        )
+      );
+    } catch {
+      /**/
+    }
   };
 
   const handleAddToFavorites = () => {
@@ -58,10 +85,14 @@ const BookDetail: React.FC<BookDetailProps> = ({ bookID }) => {
     }
   };
 
-  if (!book) {
-    return <div>Loading...</div>;
+  if (!book || isFetching) {
+    return (
+      <div className="flex items-center justify-center">
+        <Loading />
+      </div>
+    );
   }
-
+  console.log(book);
   return (
     <div className="">
       <div className="flex flex-col sm:flex-row gap-y-6 gap-x-8">
@@ -105,8 +136,16 @@ const BookDetail: React.FC<BookDetailProps> = ({ bookID }) => {
             ))}
           </div>
           <div className="flex flex-wrap gap-4">
-            <Button onClick={handleAddToCart}>
-              Add to Cart <FaShoppingCart className="w-5 h-5" />
+            <Button
+              className={`${book.is_in_my_cart ? " !bg-darkBlue " : ""}`}
+              onClick={() =>
+                !book.is_in_my_cart
+                  ? handleAddToCart(book.id)
+                  : handleRemoveFromCart(book.id)
+              }
+            >
+              {book.is_in_my_cart ? "Remove from Cart" : "Add to Cart"}
+              <FaShoppingCart className="w-5 h-5" />
             </Button>
             <Button className="bg-pink-600" onClick={handleAddToFavorites}>
               Add to Favorite <FaHeartCirclePlus className="w-5 h-5" />
@@ -118,9 +157,11 @@ const BookDetail: React.FC<BookDetailProps> = ({ bookID }) => {
       {/* My Review Section */}
       <div className="flex flex-col gap-8 mt-8">
         <div className="flex items-center gap-3">
-          <div className="text-yellow-500 text-lg">
-            ⭐ {book?.my_review?.rating}
-          </div>
+          {book.my_review && (
+            <div className="text-yellow-500 text-lg">
+              ⭐ {book?.my_review?.rating}
+            </div>
+          )}
           <Button onClick={() => setIsAddReviewModalOpen(true)}>
             {book.my_review ? "Update My Review" : "Add Review"}
           </Button>

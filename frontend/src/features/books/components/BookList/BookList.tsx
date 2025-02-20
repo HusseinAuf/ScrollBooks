@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import BookGridView from "./BookGridView/BookGridView";
-import { booksAPI } from "../../../../services/api/books";
+import { bookAPI } from "../../../../services/api/books";
 import Button from "../../../../components/common/buttons/Button";
 import BookFilterModal from "./BookFiltersModal/BookFiltersModal";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
@@ -24,12 +24,11 @@ const BookList: React.FC = () => {
 
   const { data, isLoading, isFetching, isError, error } = useQuery({
     queryKey: ["books", queryString],
-    queryFn: () => booksAPI.getBooks(queryString),
+    queryFn: () => bookAPI.getBooks(queryString),
     select: (data: any) => ({
-      data: data?.data?.data || [],
-      pageCount: data?.data?.pagination?.last || 1,
+      data: data?.data || [],
+      pageCount: data?.pagination?.last || 1,
     }),
-    placeholderData: keepPreviousData,
   });
 
   useEffect(() => {
@@ -48,10 +47,7 @@ const BookList: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-6 ">
-      <Button
-        className="!bg-darkBlue"
-        onClick={() => setIsBookFilterModalOpen(!isBookFilterModalOpen)}
-      >
+      <Button onClick={() => setIsBookFilterModalOpen(!isBookFilterModalOpen)}>
         Filters
       </Button>
       <BookFilterModal
@@ -60,7 +56,11 @@ const BookList: React.FC = () => {
         onApplyFilters={handleApplyFilters}
         filters={filters}
       />
-      <BookGridView books={data?.data} isFetching={isFetching} />
+      <BookGridView
+        isFetching={isFetching}
+        books={data?.data}
+        queryString={queryString}
+      />
       {data?.pageCount > 1 && (
         <Paginator
           pageCount={data?.pageCount}

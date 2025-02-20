@@ -46,6 +46,9 @@ class BookSerializer(BaseModelSerializer):
     review_count = serializers.IntegerField(read_only=True)
     average_rating = serializers.FloatField(read_only=True)
     my_review = serializers.SerializerMethodField()
+    is_in_my_library = serializers.BooleanField(read_only=True)
+    is_in_my_cart = serializers.BooleanField(read_only=True)
+    is_in_my_favorite = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Book
@@ -54,7 +57,7 @@ class BookSerializer(BaseModelSerializer):
 
     def get_my_review(self, obj):
         """Combine comment and rating into a dictionary"""
-        if not obj.my_review_comment and not obj.my_review_rating:
+        if not getattr(obj, "my_review_comment", None) and not getattr(obj, "my_review_rating", None):
             return None
 
         return {"id": obj.my_review_id, "comment": obj.my_review_comment, "rating": obj.my_review_rating}
@@ -72,34 +75,11 @@ class OrderSerializer(BaseModelSerializer):
     class Meta:
         model = Order
         fields = "__all__"
-
-
-class CreateOrderSerializer(BaseModelSerializer):
-    order_items = OrderItemSerializer(many=True, read_only=True)
-    book_id = serializers.IntegerField(required=False)  # Optional: Buy a specific book
-    buy_all_cart = serializers.BooleanField(default=False)  # If true, buy all books in the cart
-
-    class Meta:
-        model = Order
-        fields = "__all__"
         read_only_fields = ["user"]
-
-    def validate(self, data):
-        if not data.get("book_id") and not data["buy_all_cart"]:
-            raise serializers.ValidationError("You must provide either 'book_id' or set 'buy_all_cart' to True.")
-        if data.get("book_id") and data["buy_all_cart"]:
-            raise serializers.ValidationError(
-                "You cannot provide 'book_id' and set 'buy_all_cart' to True simultaneously."
-            )
-        return data
 
     def create(self, validated_data):
         user = self.get_current_user()
-        book_ids = []
-        if validated_data.get("buy_all_cart"):
-            book_ids = [cart_item.book.id for cart_item in user.cart.cart_items.all()]
-        else:
-            book_ids = [validated_data.get("book_id")]
+        book_ids = [cart_item.book.id for cart_item in user.cart.cart_items.all()]
 
         # Check if the user already have a book
         if user.library.filter(id__in=book_ids).exists():
@@ -162,14 +142,9 @@ class ReviewSerializer(BaseModelSerializer):
 
 
 class CartItemSerializer(BaseModelSerializer):
-    book_title = serializers.CharField(source="book.title", read_only=True)
-    price = serializers.DecimalField(max_digits=10, decimal_places=2, source="book.price", read_only=True)
+    book = BookSerializer(read_only=True)
+    book_id = serializers.PrimaryKeyRelatedField(queryset=Book.objects.all(), source="book", write_only=True)
 
     class Meta:
         model = CartItem
-        fields = ["id", "book", "book_title", "price"]
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data["book"] = BookSerializer(instance.book).data
-        return data
+        fields = ["id", "book", "book_id"]

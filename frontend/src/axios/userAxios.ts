@@ -24,16 +24,15 @@ axiosInstance.interceptors.request.use(
 );
 
 axiosInstance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) =>
+    response.config.method === "delete" ? response : response.data,
   async (error) => {
     const originalRequest = error.config;
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
         const response = await authService.refreshToken();
-        const token = response.data?.data?.access_token;
+        const token = response?.data?.access_token;
         if (token) {
           localStorage.setItem("access_token", token);
           originalRequest.headers["Authorization"] = `Bearer ${token}`;
