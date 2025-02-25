@@ -48,7 +48,7 @@ class BookSerializer(BaseModelSerializer):
     my_review = serializers.SerializerMethodField()
     is_in_my_library = serializers.BooleanField(read_only=True)
     is_in_my_cart = serializers.BooleanField(read_only=True)
-    is_in_my_favorite = serializers.BooleanField(read_only=True)
+    is_in_my_favorites = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Book

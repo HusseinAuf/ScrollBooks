@@ -8,21 +8,21 @@ import { FaShoppingCart } from "react-icons/fa";
 import { cartAPI } from "../../../../../services/api/cartItems";
 import useUserContext from "../../../../../contexts/UserContext";
 import { useQueryClient } from "@tanstack/react-query";
+import { FaHeart } from "react-icons/fa";
+import { userService } from "../../../../../services/api/auth";
+import useBookContext from "../../../../../contexts/BookContext";
+import { BiSolidCartAdd } from "react-icons/bi";
 
-interface BookGridViewProps {
-  books: any[];
+interface BooksGridProps {
   isFetching: boolean;
   queryString: string;
 }
 
-const BookGridView: React.FC<BookGridViewProps> = ({
-  isFetching,
-  books,
-  queryString,
-}) => {
+const BooksGrid: React.FC<BooksGridProps> = ({ isFetching, queryString }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { fetchCartItems } = useUserContext();
+  const { user, fetchCartItems } = useUserContext();
+  const { books, setBooks } = useBookContext();
 
   const handleAddToCart = async (bookID: number) => {
     try {
@@ -44,6 +44,39 @@ const BookGridView: React.FC<BookGridViewProps> = ({
       /**/
     }
   };
+
+  const handleAddToFavorites = async (bookID: number) => {
+    try {
+      const data = {
+        add_favorite_book: [bookID],
+      };
+      const response = await userService.updateUser(user.id, data);
+      setBooks((books: any) =>
+        books.map((book: any) =>
+          book.id == bookID ? { ...book, is_in_my_favorites: true } : book
+        )
+      );
+    } catch {
+      /**/
+    }
+  };
+
+  const handleRemoveFromFavorites = async (bookID: number) => {
+    try {
+      const data = {
+        remove_favorite_book: [bookID],
+      };
+      const response = await userService.updateUser(user.id, data);
+      setBooks((books: any) =>
+        books.map((book: any) =>
+          book.id == bookID ? { ...book, is_in_my_favorites: false } : book
+        )
+      );
+    } catch {
+      /**/
+    }
+  };
+
   return (
     <>
       {!books || isFetching ? (
@@ -54,14 +87,15 @@ const BookGridView: React.FC<BookGridViewProps> = ({
         </div>
       ) : (
         <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 px-2 pb-8">
-          {books.map((book) => (
-            <div className="relative">
-              <div
+          {books.map((book: any) => (
+            <div key={book.id} className="relative">
+              <Link
                 key={book.id}
                 className="flex flex-col items-center gap-y-3 text-sm bg-white shadow-xl text-black p-2 md:p-4 rounded-lg shadow-md w-full h-full"
-                onClick={() => {
-                  navigate(`/books/${book.id}`);
-                }}
+                // onClick={() => {
+                //   navigate(`/books/${book.id}`);
+                // }}
+                to={`/books/${book.id}`}
               >
                 <div className="relative w-full pt-[150%] bg-gray-200 rounded-md border border-4 border-mediumBlue">
                   <img
@@ -89,25 +123,34 @@ const BookGridView: React.FC<BookGridViewProps> = ({
                     </div>
                   </div>
                 </div>
-
-                {/* <div className="flex flex-col">
-                <p className="truncate">
-                Published Date:{" "}
-                {book.published_date
-                  ? format(parseISO(book.published_date), "dd.MM.yyyy")
-                  : ""}
-              </p>
-              </div> */}
+              </Link>
+              <div className="absolute -top-1 -left-1">
+                <button
+                  onClick={() =>
+                    book.is_in_my_favorites
+                      ? handleRemoveFromFavorites(book.id)
+                      : handleAddToFavorites(book.id)
+                  }
+                >
+                  <FaHeart
+                    className={`w-10 h-10 bg-white p-2 ${
+                      book.is_in_my_favorites
+                        ? "text-pink-400"
+                        : "text-gray-300"
+                    }
+                 transition-all duration-100 border border-2 border-pink-400 rounded-full`}
+                  />
+                </button>
               </div>
-              <div className="absolute -top-1 -right-4">
+              <div className="absolute -top-1 -right-1">
                 <Button
                   onClick={() => handleAddToCart(book.id)}
                   className={`text-xs !px-4 !py-2  ${
                     !book?.is_in_my_cart ? "opacity-100" : "opacity-0"
                   }`}
                 >
-                  Add to Cart
-                  <FaShoppingCart className="w-4 h-4" />
+                  {/* Add to Cart */}
+                  <BiSolidCartAdd className="w-5 h-5" />
                 </Button>
               </div>
             </div>
@@ -118,4 +161,4 @@ const BookGridView: React.FC<BookGridViewProps> = ({
   );
 };
 
-export default BookGridView;
+export default BooksGrid;

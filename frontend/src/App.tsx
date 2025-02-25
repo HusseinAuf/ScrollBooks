@@ -7,7 +7,10 @@ import VerifyEmail from "./pages/VerifyEmail";
 import SendVerifyEmail from "./pages/SendVerifyEmail";
 import ResetPassword from "./pages/ResetPassword";
 import ConfirmResetPassword from "./pages/ConfirmResetPassword";
-import BooksPage from "./features/books/BooksPage";
+import BookListPage from "./features/books/pages/BookListPage";
+import LibraryPage from "./features/books/pages/LibraryPage";
+import FavoriteBooksPage from "./features/books/pages/FavoriteBooksPage";
+import BookDetailPage from "./features/books/pages/BookDetailPage";
 import MainLayout from "./layouts/MainLayout";
 import AuthLayout from "./layouts/AuthLayout";
 
@@ -28,8 +31,10 @@ const App: React.FC = () => {
           />
         </Route>
         <Route element={<MainLayout />}>
-          <Route path="/books" element={<BooksPage />} />
-          <Route path="/books/:id" element={<BooksPage />} />
+          <Route path="/books" element={<BookListPage />} />
+          <Route path="/books/:id" element={<BookDetailPage />} />
+          <Route path="/books/library" element={<LibraryPage />} />
+          <Route path="/books/favorites" element={<FavoriteBooksPage />} />
         </Route>
       </Routes>
     </Router>

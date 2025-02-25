@@ -16,17 +16,15 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   });
   const [cartItems, setCartItems] = useState([]);
 
-  const refreshAccessToken = () => {
-    /**/
-  };
   const fetchUser = async () => {
     try {
-      const response = await userService.getMyProfile();
+      const response = await userService.getMe();
       setUser(response.data);
     } catch {
       /**/
     }
   };
+
   const fetchCartItems = async () => {
     try {
       const response = await cartAPI.getMyCart();
@@ -35,6 +33,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       /**/
     }
   };
+
   useEffect(() => {
     fetchUser();
     fetchCartItems();

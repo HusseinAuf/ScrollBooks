@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { CgProfile } from "react-icons/cg";
 import Paginator from "../../../../../components/common/Paginator/Paginator";
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { reviewService } from "../../../../../services/api/reviews";
 import Loading from "../../../../../components/common/Loading/Loading";
 
@@ -19,7 +19,6 @@ const BookReviewList: React.FC<ReviewProps> = ({ bookID }) => {
       data: data?.data || [],
       pageCount: data?.pagination?.last || 1,
     }),
-    placeholderData: keepPreviousData,
   });
 
   return (

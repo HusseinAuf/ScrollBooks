@@ -9,6 +9,7 @@ export const BookProvider: React.FC<{ children: React.ReactNode }> = ({
   const { cartItems } = useUserContext();
   const [book, setBook] = useState(null);
   const [books, setBooks] = useState([]);
+
   useEffect(() => {
     if (book) {
       setBook((prevBook: any) =>
@@ -27,6 +28,7 @@ export const BookProvider: React.FC<{ children: React.ReactNode }> = ({
       );
     }
   }, [cartItems]);
+
   const contextData = {
     book,
     setBook,

@@ -68,7 +68,7 @@ class BookViewSet(BaseViewSet):
             average_rating=Coalesce(Avg("reviews__rating"), Value(0.0)),
             is_in_my_cart=Exists(CartItem.objects.filter(cart__user=user, book=OuterRef("id"))),
             is_in_my_library=Exists(user.library.filter(id=OuterRef("id"))),
-            is_in_my_favorite=Exists(user.favorite_books.filter(id=OuterRef("id"))),
+            is_in_my_favorites=Exists(user.favorite_books.filter(id=OuterRef("id"))),
         )
 
         # Get user review of each book

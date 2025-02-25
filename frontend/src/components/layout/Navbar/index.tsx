@@ -111,22 +111,16 @@ const Navbar: React.FC = () => {
             {/* Navigation Links (Visible on Screens greater than lg) */}
             <div className="hidden lg:flex items-center space-x-4">
               <a
-                href="/home"
+                href="/books/library"
                 className="text-gray-800 hover:text-mediumBlue px-3 py-2 rounded-md text-sm font-medium"
               >
-                Home
+                Library
               </a>
               <a
-                href="/about"
+                href="/books/favorites"
                 className="text-gray-800 hover:text-mediumBlue px-3 py-2 rounded-md text-sm font-medium"
               >
-                About
-              </a>
-              <a
-                href="/contact"
-                className="text-gray-800 hover:text-mediumBlue px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Contact
+                My Favorites
               </a>
             </div>
             <Cart />
@@ -231,22 +225,16 @@ const Navbar: React.FC = () => {
           <div className="lg:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
               <a
-                href="/home"
+                href="/books/library"
                 className="block text-gray-800 hover:text-mediumBlue px-3 py-2 rounded-md text-base font-medium"
               >
-                Home
+                My Library
               </a>
               <a
-                href="/about"
+                href="/books/favorites"
                 className="block text-gray-800 hover:text-mediumBlue px-3 py-2 rounded-md text-base font-medium"
               >
-                About
-              </a>
-              <a
-                href="/contact"
-                className="block text-gray-800 hover:text-mediumBlue px-3 py-2 rounded-md text-base font-medium"
-              >
-                Contact
+                My Favorites
               </a>
             </div>
           </div>

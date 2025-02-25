@@ -11,10 +11,17 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.hashers import check_password
 from users.utils import validate_onetime_token_and_get_user
 from core.utils import dynamic_exclude
+from books.models import Book
 
 
 class UserSerializer(serializers.ModelSerializer):
     author = AuthorSerializer(read_only=True)
+    add_favorite_book = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=Book.objects.all()), write_only=True, required=False
+    )
+    remove_favorite_book = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=Book.objects.all()), write_only=True, required=False
+    )
 
     class Meta:
         model = User
@@ -29,6 +36,13 @@ class UserSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         if "password" in validated_data:
             raise serializers.ValidationError({"password": _("Password cannot be updated from this endpoint.")})
+
+        add_favorite_book = validated_data.pop("add_favorite_book", None)
+        if add_favorite_book is not None:
+            instance.favorite_books.add(*add_favorite_book)
+        remove_favorite_book = validated_data.pop("remove_favorite_book", None)
+        if remove_favorite_book is not None:
+            instance.favorite_books.remove(*remove_favorite_book)
         return super().update(instance, validated_data)
 
 

@@ -2,9 +2,11 @@ import React from "react";
 import logo from "../../../assets/images/scrollbooks_logo.png";
 import Button from "../../common/buttons/Button";
 import { useNavigate } from "react-router-dom";
+import useUserContext from "../../../contexts/UserContext";
 
 const HeroSection: React.FC = () => {
   const navigate = useNavigate();
+  const { accessToken } = useUserContext();
   const [isVisible, setIsVisible] = React.useState(false);
 
   React.useEffect(() => {
@@ -15,6 +17,10 @@ const HeroSection: React.FC = () => {
 
   const handleGetStarted = () => {
     navigate("/signin");
+  };
+
+  const handleExploreBooks = () => {
+    navigate("/books");
   };
 
   return (
@@ -38,7 +44,13 @@ const HeroSection: React.FC = () => {
           Discover, read, and explore a world of e-books at your fingertips.
         </p>
         <div className="mt-6">
-          <Button onClick={handleGetStarted}>Get Started</Button>
+          <Button
+            onClick={() =>
+              accessToken ? handleExploreBooks() : handleGetStarted()
+            }
+          >
+            {accessToken ? "Explore Books" : "Get Started"}
+          </Button>
         </div>
       </div>
     </section>

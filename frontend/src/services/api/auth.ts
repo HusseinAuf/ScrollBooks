@@ -74,13 +74,13 @@ export const authService = {
 };
 
 export const userService = {
-  getMyProfile: async () => {
+  getMe: async () => {
     const response = await axiosInstance.get("/api/v1/users/users/me/");
     return response;
   },
-  updateMyProfile: async (id: number, data: object) => {
+  updateUser: async (id: number, data: object) => {
     const response = await axiosInstance.patch(
-      `/api/v1/users/users/${id}`,
+      `/api/v1/users/users/${id}/`,
       data
     );
     return response;

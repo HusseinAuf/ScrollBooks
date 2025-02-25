@@ -19,14 +19,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false, // Prevents refetching when window regains focus
-      select: (data: any) => {
-        return data?.pagination
-          ? {
-              data: data?.data || [],
-              pageCount: data?.pagination?.last || 1,
-            }
-          : data?.data || null;
-      },
+      select: (data: any) => data,
       placeholderData: keepPreviousData,
     },
   },

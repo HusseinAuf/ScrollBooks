@@ -1,31 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
-import { bookAPI } from "../../../../services/api/books";
-import { reviewService } from "../../../../services/api/reviews";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import EditableStarRating from "../../../../components/shared/StartRating/EditableStarRating/EditableStarRating";
-import Button from "../../../../components/common/buttons/Button";
-import { FaDatabase, FaHeartCirclePlus } from "react-icons/fa6";
+import { bookAPI } from "../../../services/api/books";
+import { reviewService } from "../../../services/api/reviews";
+import { useQuery } from "@tanstack/react-query";
+import Button from "../../../components/common/buttons/Button";
+import { FaHeartCirclePlus } from "react-icons/fa6";
 import { FaShoppingCart } from "react-icons/fa";
-import BookReviewList from "./BookReviewList/BookReviewList";
-import AddReviewModal from "./AddReviewModal/AddReviewModal";
-import useCommonDataContext from "../../../../contexts/CommonDataContext";
-import { cartAPI } from "../../../../services/api/cartItems";
-import useUserContext from "../../../../contexts/UserContext";
+import BookReviewList from "../components/BookDetail/BookReviewList/BookReviewList";
+import AddReviewModal from "../components/BookDetail/AddReviewModal/AddReviewModal";
+import useCommonDataContext from "../../../contexts/CommonDataContext";
+import { cartAPI } from "../../../services/api/cartItems";
+import useUserContext from "../../../contexts/UserContext";
 import { useQueryClient } from "@tanstack/react-query";
-import useBookContext from "../../../../contexts/BookContext";
-import Loading from "../../../../components/common/Loading/Loading";
+import useBookContext from "../../../contexts/BookContext";
+import Loading from "../../../components/common/Loading/Loading";
+import { userService } from "../../../services/api/auth";
+import { FaHeart } from "react-icons/fa";
 
-interface BookDetailProps {
-  bookID: number;
-}
-
-const BookDetail: React.FC<BookDetailProps> = ({ bookID }) => {
+const BookDetailPage: React.FC = () => {
+  const { id } = useParams();
+  const bookID = Number(id);
   const queryClient = useQueryClient();
   const { book, setBook } = useBookContext();
   const { currenciesMap } = useCommonDataContext();
-  const { cartItems, setCartItems, fetchCartItems } = useUserContext();
+  const { user, cartItems, setCartItems, fetchCartItems } = useUserContext();
   const [isAddReviewModalOpen, setIsAddReviewModalOpen] = useState(false);
   const { data, isLoading, isFetching, isError, error, refetch } = useQuery({
     queryKey: ["books", bookID],
@@ -63,8 +61,28 @@ const BookDetail: React.FC<BookDetailProps> = ({ bookID }) => {
     }
   };
 
-  const handleAddToFavorites = () => {
-    alert(`Added ${book?.title} to favorites!`);
+  const handleAddToFavorites = async () => {
+    try {
+      const data = {
+        add_favorite_book: [book.id],
+      };
+      const response = await userService.updateUser(user.id, data);
+      setBook((book: any) => ({ ...book, is_in_my_favorites: true }));
+    } catch {
+      /**/
+    }
+  };
+
+  const handleRemoveFromFavorites = async () => {
+    try {
+      const data = {
+        remove_favorite_book: [book.id],
+      };
+      const response = await userService.updateUser(user.id, data);
+      setBook((book: any) => ({ ...book, is_in_my_favorites: false }));
+    } catch {
+      /**/
+    }
   };
 
   const handleSubmitReview = async (data: object) => {
@@ -122,9 +140,25 @@ const BookDetail: React.FC<BookDetailProps> = ({ bookID }) => {
             </span>
           </p>
           {/* <p className="text-2xl font-bold">${book.price}</p> */}
-          <span className="text-lg font-bold text-darkBlue bg-xLightBlue p-3 w-fit rounded-full">
-            {currenciesMap[book.currency]} {book.price}
-          </span>
+          <div className="flex gap-4">
+            <span className="text-lg font-bold text-darkBlue bg-xLightBlue p-3 w-fit rounded-full">
+              {currenciesMap[book.currency]} {book.price}
+            </span>
+            <button
+              onClick={() =>
+                book.is_in_my_favorites
+                  ? handleRemoveFromFavorites()
+                  : handleAddToFavorites()
+              }
+            >
+              <FaHeart
+                className={`w-10 h-10 p-2 ${
+                  book.is_in_my_favorites ? "text-pink-400" : "text-gray-300"
+                }
+                 transition-all duration-100 border border-2 border-pink-400 rounded-full`}
+              />
+            </button>
+          </div>
           <div className="flex space-x-2 mb-4">
             {book.categories.map((category: any) => (
               <span
@@ -147,9 +181,19 @@ const BookDetail: React.FC<BookDetailProps> = ({ bookID }) => {
               {book.is_in_my_cart ? "Remove from Cart" : "Add to Cart"}
               <FaShoppingCart className="w-5 h-5" />
             </Button>
-            <Button className="bg-pink-600" onClick={handleAddToFavorites}>
-              Add to Favorite <FaHeartCirclePlus className="w-5 h-5" />
-            </Button>
+            {/* <Button
+              className="bg-pink-600"
+              onClick={() =>
+                book.is_in_my_favorites
+                  ? handleRemoveFromFavorites()
+                  : handleAddToFavorites()
+              }
+            >
+              {book.is_in_my_favorites
+                ? "Remove From Favorites"
+                : "Add to Favorites"}
+              <FaHeartCirclePlus className="w-5 h-5" />
+            </Button> */}
           </div>
         </div>
       </div>
@@ -182,4 +226,4 @@ const BookDetail: React.FC<BookDetailProps> = ({ bookID }) => {
   );
 };
 
-export default BookDetail;
+export default BookDetailPage;
