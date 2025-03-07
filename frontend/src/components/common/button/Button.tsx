@@ -1,5 +1,4 @@
 import React from "react";
-import clsx from "clsx";
 
 interface ButtonProps {
   onClick?: (e: any) => void;
@@ -20,10 +19,9 @@ const Button: React.FC<ButtonProps> = ({
   icon: Icon,
 }) => {
   const baseClassName = `text-sm w-fit py-3 px-5 hover:shadow-lg text-white font-bold rounded-full transition-all duration-300 ${
-    disabled ? "bg-darkBlue" : "bg-mediumBlue"
+    disabled ? "bg-gray-500" : "bg-mediumBlue"
   }`;
-  // className = baseClassName + " " + className;
-  className = clsx(baseClassName, className);
+  className = baseClassName + " " + className;
   return (
     <button
       onClick={onClick}

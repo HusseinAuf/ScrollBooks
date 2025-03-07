@@ -38,7 +38,7 @@ from collections import OrderedDict
 from django.db.models import Count, Avg, Value, Subquery, OuterRef, Exists
 from django.db.models.functions import Coalesce
 from core.utils import get_object_or_none
-
+from rest_framework.permissions import AllowAny
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -66,6 +66,10 @@ class BookViewSet(BaseViewSet):
         queryset = queryset.annotate(
             review_count=Count("reviews"),
             average_rating=Coalesce(Avg("reviews__rating"), Value(0.0)),
+        )
+        if not user.is_authenticated:
+            return queryset
+        queryset = queryset.annotate(
             is_in_my_cart=Exists(CartItem.objects.filter(cart__user=user, book=OuterRef("id"))),
             is_in_my_library=Exists(user.library.filter(id=OuterRef("id"))),
             is_in_my_favorites=Exists(user.favorite_books.filter(id=OuterRef("id"))),

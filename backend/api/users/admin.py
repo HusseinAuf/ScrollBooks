@@ -30,6 +30,15 @@ class UserAdmin(BaseUserAdmin):
                 ),
             },
         ),
+        (
+            _("Books"),
+            {
+                "fields": (
+                    "favorite_books",
+                    "library",
+                ),
+            },
+        ),
     )
     add_fieldsets = (
         (

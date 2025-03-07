@@ -33,26 +33,25 @@ const Paginator: React.FC<PaginateReactProps> = ({
         forcePage={page - 1}
         disableInitialCallback={true}
         containerClassName={"flex justify-center gap-2"}
-        pageClassName={
-          "font-semibold flex items-center justify-center bg-darkBlue hover:bg-mediumBlue transition-color duration-300 text-white w-8 h-8 rounded-full border border-gray-500"
+        pageClassName={"flex items-center justify-center"}
+        pageLinkClassName={
+          "flex justify-center items-center p-1 font-semibold text-white bg-mediumBlue hover:bg-darkBlue transition-color duration-300 min-w-8 h-8 rounded-lg border border-gray-500"
         }
-        pageLinkClassName={"flex items-center justify-center p-1"}
         previousClassName={"flex items-center justify-center"}
+        previousLinkClassName={`mr-2 text-lg text-white flex items-center justify-center ${
+          page === 1
+            ? "bg-gray-500 cursor-not-allowed"
+            : "bg-mediumBlue hover:bg-darkBlue"
+        } transition-color duration-300 text-base shadow-xl w-7 h-7 rounded-lg`}
         nextClassName={"flex items-center justify-center"}
-        previousLinkClassName={
-          "mr-2 text-lg text-white flex items-center justify-center bg-mediumBlue hover:bg-darkBlue transition-color duration-300 text-base shadow-xl w-7 h-7 rounded-lg"
-        }
-        nextLinkClassName={
-          "ml-2 text-lg text-white flex items-center justify-center bg-mediumBlue hover:bg-darkBlue transition-color duration-300 text-base shadow-xl w-7 h-7 rounded-lg"
-        }
+        nextLinkClassName={`ml-2 text-lg text-white flex items-center justify-center ${
+          page === pageCount
+            ? "bg-gray-500 cursor-not-allowed"
+            : "bg-mediumBlue hover:bg-darkBlue"
+        } transition-color duration-300 text-base shadow-xl w-7 h-7 rounded-lg`}
         breakClassName={"flex items-center justify-center"}
         breakLinkClassName={"flex items-center justify-center"}
-        activeClassName={
-          "bg-mediumBlue transition-color duration-300 text-white"
-        }
-        activeLinkClassName={
-          "bg-mediumBlue transition-color duration-300 text-white w-full h-full rounded-full"
-        }
+        activeLinkClassName={"!bg-darkBlue"}
       />
     </>
   );

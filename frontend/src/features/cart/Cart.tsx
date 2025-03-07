@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { IoCartSharp } from "react-icons/io5";
 import useUserContext from "../../contexts/UserContext";
-import Button from "../../components/common/buttons/Button";
+import Button from "../../components/common/button/Button";
 import { Link } from "react-router-dom";
 import { cartAPI } from "../../services/api/cartItems";
 import { useQueryClient } from "@tanstack/react-query";
@@ -82,7 +82,7 @@ const Cart: React.FC = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute transform sm:transform-none translate-x-1/2 right-1/2 sm:right-0 mt-2 w-72 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+        <div className="fixed sm:absolute transform sm:transform-none translate-x-1/2 right-1/2 sm:right-0 mt-2 w-72 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
           {cartItems.length === 0 ? (
             <p className="p-4 text-gray-600">Your cart is empty.</p>
           ) : (

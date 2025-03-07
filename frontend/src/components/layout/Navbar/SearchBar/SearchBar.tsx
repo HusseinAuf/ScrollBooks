@@ -1,20 +1,23 @@
 import React, { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import logo from "../../../assets/images/scrollbooks_logo.png";
-import { Link } from "react-router-dom";
 import useUserContext from "../../../../contexts/UserContext";
+import Button from "../../../common/button/Button";
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useUserContext();
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>(
+    searchParams.get("search") || ""
+  );
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     onSearch(searchQuery);
-    console.log("Searching for:", searchQuery);
   };
 
   return (
@@ -42,6 +45,11 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
             ></path>
           </svg>
+        </span>
+        <span className="absolute inset-y-0 right-0 pl-3 flex items-center">
+          <Button type="submit" className="!text-xs !p-3">
+            Search
+          </Button>
         </span>
       </div>
     </form>

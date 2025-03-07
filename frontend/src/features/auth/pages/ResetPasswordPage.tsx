@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import Button from "../../components/common/buttons/Button";
-import useUserContext from "../../contexts/UserContext";
+import Button from "../../../components/common/button/Button";
+import useUserContext from "../../../contexts/UserContext";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { resetPassword } from "../../validations/resetPassword";
-import { authService } from "../../services/api/auth";
-import { showToast } from "../../utils/toast";
-import LoadingPage from "../../components/common/LoadingPages/LoadingPage";
+import { resetPassword } from "../../../validations/resetPassword";
+import { authAPI } from "../../../services/api/auth";
+import { showToast } from "../../../utils/toast";
+import LoadingPage from "../../../components/common/LoadingPages/LoadingPage";
 
-const ResetPassword: React.FC = () => {
+const ResetPasswordPage: React.FC = () => {
   const {
     register,
     handleSubmit,
@@ -22,7 +22,7 @@ const ResetPassword: React.FC = () => {
   const handleResetPassword = async (formData: object) => {
     try {
       setIsLoading(true);
-      await authService.resetPassword(formData);
+      await authAPI.resetPassword(formData);
       showToast("A reset password link has been sent to you");
     } catch (error) {
       /**/
@@ -67,4 +67,4 @@ const ResetPassword: React.FC = () => {
   );
 };
 
-export default ResetPassword;
+export default ResetPasswordPage;

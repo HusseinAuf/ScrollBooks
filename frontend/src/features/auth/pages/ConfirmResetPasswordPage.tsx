@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
-import Button from "../../components/common/buttons/Button";
-import useUserContext from "../../contexts/UserContext";
+import Button from "../../../components/common/button/Button";
+import useUserContext from "../../../contexts/UserContext";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { confirmResetPassword } from "../../validations/confirmResetPassword";
-import { authService } from "../../services/api/auth";
-import { showToast } from "../../utils/toast";
-import LoadingPage from "../../components/common/LoadingPages/LoadingPage";
+import { confirmResetPassword } from "../../../validations/confirmResetPassword";
+import { authAPI } from "../../../services/api/auth";
+import { showToast } from "../../../utils/toast";
+import LoadingPage from "../../../components/common/LoadingPages/LoadingPage";
 import { error } from "console";
 
-const ConfirmResetPassword: React.FC = () => {
+const ConfirmResetPasswordPage: React.FC = () => {
   const navigate = useNavigate();
   const { id, token } = useParams();
   const {
@@ -24,13 +24,11 @@ const ConfirmResetPassword: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleConfirmResetPassword = async (formData: object) => {
-    console.log("sdf");
-    console.log(id, token);
     try {
       setIsLoading(true);
-      await authService.confirmResetPassword(id ?? "", token ?? "", formData);
+      await authAPI.confirmResetPassword(id ?? "", token ?? "", formData);
       showToast("Your password has been successfully reset.");
-      navigate("/signin");
+      navigate("/login");
     } catch (err) {
       /**/
     } finally {
@@ -96,4 +94,4 @@ const ConfirmResetPassword: React.FC = () => {
   );
 };
 
-export default ConfirmResetPassword;
+export default ConfirmResetPasswordPage;

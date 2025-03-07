@@ -1,7 +1,7 @@
 import { axiosInstance, publicAxiosInstance } from "../../axios/userAxios";
 
-export const authService = {
-  signin: async (data: object) => {
+export const authAPI = {
+  login: async (data: object) => {
     const response = await publicAxiosInstance.post(
       "/api/v1/users/login/",
       data,
@@ -73,7 +73,7 @@ export const authService = {
   },
 };
 
-export const userService = {
+export const userAPI = {
   getMe: async () => {
     const response = await axiosInstance.get("/api/v1/users/users/me/");
     return response;

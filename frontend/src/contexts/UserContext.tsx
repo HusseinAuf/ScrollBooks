@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { userService } from "../services/api/auth";
+import { userAPI } from "../services/api/auth";
 import { cartAPI } from "../services/api/cartItems";
+import { accessSync } from "fs";
 
 const UserContext = createContext<any>(null);
 
@@ -15,11 +16,16 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     return storedUser ? JSON.parse(storedUser) : null;
   });
   const [cartItems, setCartItems] = useState([]);
+  const [isVerifiedUser, setisVerifiedUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser).is_verified : false;
+  });
 
   const fetchUser = async () => {
     try {
-      const response = await userService.getMe();
+      const response = await userAPI.getMe();
       setUser(response.data);
+      localStorage.setItem("user", JSON.stringify(response.data));
     } catch {
       /**/
     }
@@ -35,13 +41,16 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    fetchUser();
-    fetchCartItems();
+    if (accessToken) {
+      fetchUser();
+      fetchCartItems();
+    }
   }, []);
 
   const contextData = {
     user,
     setUser,
+    isVerifiedUser,
     fetchUser,
     cartItems,
     setCartItems,

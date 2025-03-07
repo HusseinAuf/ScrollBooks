@@ -16,10 +16,10 @@ from books.models import Book
 
 class UserSerializer(serializers.ModelSerializer):
     author = AuthorSerializer(read_only=True)
-    add_favorite_book = serializers.ListField(
+    add_favorite_books = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=Book.objects.all()), write_only=True, required=False
     )
-    remove_favorite_book = serializers.ListField(
+    remove_favorite_books = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=Book.objects.all()), write_only=True, required=False
     )
 
@@ -37,12 +37,12 @@ class UserSerializer(serializers.ModelSerializer):
         if "password" in validated_data:
             raise serializers.ValidationError({"password": _("Password cannot be updated from this endpoint.")})
 
-        add_favorite_book = validated_data.pop("add_favorite_book", None)
-        if add_favorite_book is not None:
-            instance.favorite_books.add(*add_favorite_book)
-        remove_favorite_book = validated_data.pop("remove_favorite_book", None)
-        if remove_favorite_book is not None:
-            instance.favorite_books.remove(*remove_favorite_book)
+        add_favorite_books = validated_data.pop("add_favorite_books", None)
+        if add_favorite_books is not None:
+            instance.favorite_books.add(*add_favorite_books)
+        remove_favorite_books = validated_data.pop("remove_favorite_books", None)
+        if remove_favorite_books is not None:
+            instance.favorite_books.remove(*remove_favorite_books)
         return super().update(instance, validated_data)
 
 

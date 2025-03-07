@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import useCommonDataContext from "../../../../../contexts/CommonDataContext";
-import Button from "../../../../../components/common/buttons/Button";
+import Button from "../../../../../components/common/button/Button";
 import Select from "../../../../../components/common/Select/Select";
 import EditableStarRating from "../../../../../components/shared/StartRating/EditableStarRating/EditableStarRating";
 import TextArea from "../../../../../components/common/TextArea/TextArea";
-import { reviewService } from "../../../../../services/api/reviews";
+import { reviewAPI } from "../../../../../services/api/reviews";
 
 interface AddReviewModalProps {
   isOpen: boolean;

@@ -1,18 +1,19 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Landing from "./pages/Landing";
-import Signup from "./pages/Signup";
-import Signin from "./pages/Signin";
-import VerifyEmail from "./pages/VerifyEmail";
-import SendVerifyEmail from "./pages/SendVerifyEmail";
-import ResetPassword from "./pages/ResetPassword";
-import ConfirmResetPassword from "./pages/ConfirmResetPassword";
+import Landing from "./features/landing/pages/LandingPage";
+import SignupPage from "./features/auth/pages/SignupPage";
+import LoginPage from "./features/auth/pages/LoginPage";
+import VerifyEmailPage from "./features/auth/pages/VerifyEmailPage";
+import SendVerifyEmailPage from "./features/auth/pages/SendVerifyEmailPage";
+import ResetPasswordPage from "./features/auth/pages/ResetPasswordPage";
+import ConfirmResetPasswordPage from "./features/auth/pages/ConfirmResetPasswordPage";
 import BookListPage from "./features/books/pages/BookListPage";
 import LibraryPage from "./features/books/pages/LibraryPage";
 import FavoriteBooksPage from "./features/books/pages/FavoriteBooksPage";
 import BookDetailPage from "./features/books/pages/BookDetailPage";
 import MainLayout from "./layouts/MainLayout";
 import AuthLayout from "./layouts/AuthLayout";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 const App: React.FC = () => {
   return (
@@ -20,14 +21,17 @@ const App: React.FC = () => {
       <Routes>
         <Route element={<AuthLayout />}>
           <Route path="/" element={<Landing />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/signin" element={<Signin />} />
-          <Route path="/verify-email/:id/:token" element={<VerifyEmail />} />
-          <Route path="/send-verify-email" element={<SendVerifyEmail />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/verify-email/:id/:token"
+            element={<VerifyEmailPage />}
+          />
+          <Route path="/send-verify-email" element={<SendVerifyEmailPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route
             path="/confirm-reset-password/:id/:token"
-            element={<ConfirmResetPassword />}
+            element={<ConfirmResetPasswordPage />}
           />
         </Route>
         <Route element={<MainLayout />}>

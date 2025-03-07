@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { categoryService } from "../services/api/categories";
+import { categoryAPI } from "../services/api/categories";
 import { useQuery } from "@tanstack/react-query";
 
 const CommonDataContext = createContext<any>(null);
@@ -9,7 +9,7 @@ export const CommonDataProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const { data: categories } = useQuery({
     queryKey: ["categories"],
-    queryFn: () => categoryService.getCategories(),
+    queryFn: () => categoryAPI.getCategories(),
     select: (data: any) => data?.data || [],
   });
 

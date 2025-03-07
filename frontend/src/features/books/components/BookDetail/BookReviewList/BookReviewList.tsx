@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { CgProfile } from "react-icons/cg";
 import Paginator from "../../../../../components/common/Paginator/Paginator";
 import { useQuery } from "@tanstack/react-query";
-import { reviewService } from "../../../../../services/api/reviews";
+import { reviewAPI } from "../../../../../services/api/reviews";
 import Loading from "../../../../../components/common/Loading/Loading";
-
+import { keepPreviousData } from "@tanstack/react-query";
 interface ReviewProps {
   bookID: number;
 }
@@ -14,11 +14,12 @@ const BookReviewList: React.FC<ReviewProps> = ({ bookID }) => {
 
   const { data, isLoading, isFetching, isError, error } = useQuery({
     queryKey: ["reviews", bookID, page],
-    queryFn: () => reviewService.getReviews(bookID, page),
+    queryFn: () => reviewAPI.getReviews(bookID, page),
     select: (data: any) => ({
       data: data?.data || [],
       pageCount: data?.pagination?.last || 1,
     }),
+    placeholderData: keepPreviousData,
   });
 
   return (

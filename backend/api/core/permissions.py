@@ -3,12 +3,14 @@ from rest_framework.permissions import DjangoModelPermissions
 
 class BasePermissions(DjangoModelPermissions):
     def has_permission(self, request, view):
+        if view.action in ["list", "retrieve"]:
+            return True
         if not request.user or (not request.user.is_authenticated and self.authenticated_users_only):
             return False
         return True
 
     def has_object_permission(self, request, view, obj):
-        if view.action not in ["create", "update", "partial_update", "delete"]:
+        if view.action not in ["update", "partial_update", "delete"]:
             return True
         user = request.user
         if hasattr(view, "permission_relation"):

@@ -15,7 +15,7 @@ export const showToast = (
 
   toast(message, {
     type,
-    className: `${baseClass} ${typeClasses[type] || "bg-gray-500"}`,
+    // className: `${baseClass} ${typeClasses[type] || "bg-gray-500"}`,
     progressClassName: "bg-green-700 h-1",
     position: "top-right",
     autoClose: 5000,

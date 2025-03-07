@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../../assets/images/scrollbooks_logo.png";
 import useUserContext from "../../../contexts/UserContext";
 import SearchBar from "./SearchBar/SearchBar";
 import Cart from "../../../features/cart/Cart";
+import { authAPI } from "../../../services/api/auth";
+import { showToast } from "../../../utils/toast";
 
 const Navbar: React.FC = () => {
+  const navigate = useNavigate();
   const { user } = useUserContext();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
@@ -15,7 +18,7 @@ const Navbar: React.FC = () => {
   const searchRef = useRef<HTMLDivElement>(null); // Ref for the search container
 
   const onSearch = (query: string) => {
-    // Add your search logic here
+    navigate(`/books/?search=${query}`);
   };
 
   const toggleDropdown = () => {
@@ -47,9 +50,21 @@ const Navbar: React.FC = () => {
     };
   }, []);
 
+  const handleLogout = async () => {
+    try {
+      await authAPI.logout();
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("user");
+      navigate("/");
+      navigate(0);
+    } catch {
+      showToast("Failed to logout.", "error");
+    }
+  };
+
   return (
     <nav className="bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 gap-6">
           {/* Logo (Hidden when search is expanded) */}
           <div className="flex items-center">
@@ -104,43 +119,102 @@ const Navbar: React.FC = () => {
             </div>
 
             {/* Search Bar (Visible on Screens greater than md) */}
-            <div className="hidden md:block flex-1">
+            <div
+              className={`hidden md:block  ${user ? "flex-1" : "w-1/2 m-auto"}`}
+            >
               <SearchBar onSearch={onSearch} />
             </div>
 
-            {/* Navigation Links (Visible on Screens greater than lg) */}
-            <div className="hidden lg:flex items-center space-x-4">
-              <a
-                href="/books/library"
-                className="text-gray-800 hover:text-mediumBlue px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Library
-              </a>
-              <a
-                href="/books/favorites"
-                className="text-gray-800 hover:text-mediumBlue px-3 py-2 rounded-md text-sm font-medium"
-              >
-                My Favorites
-              </a>
-            </div>
-            <Cart />
+            {user && (
+              <>
+                {/* Navigation Links (Visible on Screens greater than lg) */}
+                <div className="hidden lg:flex items-center space-x-4">
+                  <a
+                    href="/books/library"
+                    className="text-gray-800 hover:text-mediumBlue px-3 py-2 rounded-md text-sm font-medium"
+                  >
+                    Library
+                  </a>
+                  <a
+                    href="/books/favorites"
+                    className="text-gray-800 hover:text-mediumBlue px-3 py-2 rounded-md text-sm font-medium"
+                  >
+                    My Favorites
+                  </a>
+                </div>
 
-            {/* User Profile Dropdown (Visible on All Screens) */}
-            <div className="flex items-center">
-              <div className="relative" ref={dropdownRef}>
-                <button
-                  onClick={toggleDropdown}
-                  className="flex items-center text-sm focus:outline-none text-gray-800 hover:text-mediumBlue"
-                >
-                  {user?.author?.picture ? (
-                    <img
-                      className="h-8 w-8 rounded-full"
-                      src="https://via.placeholder.com/150"
-                      alt="User"
-                    />
-                  ) : (
+                <Cart />
+
+                {/* User Profile Dropdown */}
+                <div className="flex items-center">
+                  <div className="relative" ref={dropdownRef}>
+                    <button
+                      onClick={toggleDropdown}
+                      className="flex items-center text-sm focus:outline-none text-gray-800 hover:text-mediumBlue"
+                    >
+                      {user?.author?.picture ? (
+                        <img
+                          className="h-8 w-8 rounded-full"
+                          src="https://via.placeholder.com/150"
+                          alt="User"
+                        />
+                      ) : (
+                        <svg
+                          className="h-5 w-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                          />
+                        </svg>
+                      )}
+                      <span className="ml-2 text-gray-800 hidden md:inline">
+                        {user?.name}
+                      </span>
+                      <svg
+                        className="ml-2 h-4 w-4 text-gray-800"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M19 9l-7 7-7-7"
+                        ></path>
+                      </svg>
+                    </button>
+
+                    {/* Dropdown Menu */}
+                    {isDropdownOpen && (
+                      <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                        <button
+                          onClick={handleLogout}
+                          className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Logout
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Mobile Menu Button */}
+                <div className="flex items-center lg:hidden">
+                  <button
+                    onClick={toggleMenu}
+                    className="text-gray-800 hover:text-mediumBlue focus:outline-none"
+                  >
                     <svg
-                      className="h-5 w-5"
+                      className="h-6 w-6"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -150,78 +224,18 @@ const Navbar: React.FC = () => {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth="2"
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                      />
+                        d="M4 6h16M4 12h16m-7 6h7"
+                      ></path>
                     </svg>
-                  )}
-                  <span className="ml-2 text-gray-800 hidden md:inline">
-                    {user?.name}
-                  </span>
-                  <svg
-                    className="ml-2 h-4 w-4 text-gray-800"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M19 9l-7 7-7-7"
-                    ></path>
-                  </svg>
-                </button>
-
-                {/* Dropdown Menu */}
-                {isDropdownOpen && (
-                  <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                    <div className="py-1">
-                      <a
-                        href="/profile"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      >
-                        Profile
-                      </a>
-                      <a
-                        href="/logout"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      >
-                        Logout
-                      </a>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Mobile Menu Button (Hamburger Icon) */}
-            <div className="flex items-center lg:hidden">
-              <button
-                onClick={toggleMenu}
-                className="text-gray-800 hover:text-mediumBlue focus:outline-none"
-              >
-                <svg
-                  className="h-6 w-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M4 6h16M4 12h16m-7 6h7"
-                  ></path>
-                </svg>
-              </button>
-            </div>
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
         {/* Mobile Menu (Visible on Small Screens) */}
-        {isMenuOpen && (
+        {user && isMenuOpen && (
           <div className="lg:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
               <a

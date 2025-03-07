@@ -165,8 +165,16 @@ JWT_SECRET_KEY = env("JWT_SECRET_KEY")
 
 # REST_FRAMEWORK = {"EXCEPTION_HANDLER": "tender.utils.drf_exception_handler"}
 CORS_ALLOW_CREDENTIALS = True
-# CORS_ALLOW_ALL_ORIGINS = True # not recommended for production
+CORS_ALLOW_ALL_ORIGINS = True  # not recommended for production
 CORS_ALLOWED_ORIGINS = [env("WEB_ROOT_URL")]
+
+CORS_ALLOW_HEADERS = [
+    "content-type",
+    "authorization",
+    "Access-Control-Allow-Origin",
+]
+
+CORS_EXPOSE_HEADERS = ["Content-Disposition"]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/

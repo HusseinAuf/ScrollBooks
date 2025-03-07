@@ -37,7 +37,6 @@ from django.conf import settings
 import requests
 from datetime import datetime
 from users.services.google_auth import GoogleAuthService
-from core.error_codes import ErrorCodes
 
 
 class UserViewSet(BaseViewSet, NonDeletableViewSet, NonListableViewSet, NonRetrievableViewSet):
@@ -73,10 +72,6 @@ class BaseUserGenericAPIView(generics.GenericAPIView):
 class LoginView(TokenObtainPairView, BaseUserGenericAPIView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
-
-        # check if the user is verified
-        if not response.data["user"]["is_verified"]:
-            return Response({"detail": "User is not verified.", "code": ErrorCodes.USER_NOT_VERIFIED}, status=403)
 
         response.data["access_token"] = response.data["access"]
         set_jwt_cookies(response, response.data.pop("access"), response.data.pop("refresh"))

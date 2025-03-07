@@ -33,7 +33,7 @@ export const UIProvider: React.FC<{ children: React.ReactNode }> = ({
     };
 
     window.addEventListener("resize", handleResize);
-    handleResize(); // Run on mount to set initial state
+    handleResize();
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);

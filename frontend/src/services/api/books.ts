@@ -3,21 +3,21 @@ import { axiosInstance, publicAxiosInstance } from "../../axios/userAxios";
 export const bookAPI = {
   getBooks: async (queryString = ""): Promise<any> => {
     const response = await axiosInstance.get(
-      `/api/v1/books/books/?${queryString}`
+      `/api/v1/books/books/?page_size=2&${queryString}`
     );
     return response;
   },
 
   getMyLibrary: async (queryString = ""): Promise<any> => {
     const response = await axiosInstance.get(
-      `/api/v1/books/books/?library=true&${queryString}`
+      `/api/v1/books/books/?page_size=2&library=true&${queryString}`
     );
     return response;
   },
 
   getFavoriteBooks: async (queryString = ""): Promise<any> => {
     const response = await axiosInstance.get(
-      `/api/v1/books/books/?favorites=true&${queryString}`
+      `/api/v1/books/books/?page_size=2&favorites=true&${queryString}`
     );
     return response;
   },

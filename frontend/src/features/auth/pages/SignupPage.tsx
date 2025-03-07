@@ -1,18 +1,18 @@
 import React, { useState } from "react";
-import Button from "../../components/common/buttons/Button";
+import Button from "../../../components/common/button/Button";
 import { useGoogleLogin } from "@react-oauth/google";
 import { FaGoogle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { signupSchema } from "../../validations/signup";
-import { authService } from "../../services/api/auth";
-import { showToast } from "../../utils/toast";
-import LoadingPage from "../../components/common/LoadingPages/LoadingPage";
+import { signupSchema } from "../../../validations/signup";
+import { authAPI } from "../../../services/api/auth";
+import { showToast } from "../../../utils/toast";
+import LoadingPage from "../../../components/common/LoadingPages/LoadingPage";
 import { useNavigate } from "react-router-dom";
-import useUserContext from "../../contexts/UserContext";
+import useUserContext from "../../../contexts/UserContext";
 
-const Signup: React.FC = () => {
+const SignupPage: React.FC = () => {
   const navigate = useNavigate();
   const {
     register,
@@ -27,7 +27,7 @@ const Signup: React.FC = () => {
   const handleSignup = async (formData: object) => {
     try {
       setIsLoading(true);
-      const response = await authService.signup(formData);
+      const response = await authAPI.signup(formData);
       setUser(response.data);
       showToast("Welcome to ScrollBooks!");
       navigate(`/send-verify-email?email=${response.data.email}`);
@@ -41,7 +41,7 @@ const Signup: React.FC = () => {
   const handlegoogleAuth = useGoogleLogin({
     onSuccess: async (googleResponse) => {
       try {
-        const response = await authService.googleAuth({
+        const response = await authAPI.googleAuth({
           google_code: googleResponse.code,
         });
       } catch (err) {
@@ -118,14 +118,14 @@ const Signup: React.FC = () => {
           <div className="font-bold">OR</div>
           <div>
             <Button onClick={() => handlegoogleAuth()} icon={FaGoogle}>
-              Sign in with Google
+              Log in with Google
             </Button>
           </div>
         </div>
         <div className="text-sm">
           Already have an account?{" "}
-          <Link to="/signin" className="text-md font-semibold text-xLightBlue">
-            Sign in
+          <Link to="/login" className="text-md font-semibold text-xLightBlue">
+            Log in
           </Link>
         </div>
       </div>
@@ -133,4 +133,4 @@ const Signup: React.FC = () => {
   );
 };
 
-export default Signup;
+export default SignupPage;

@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import Button from "../../components/common/buttons/Button";
-import { authService } from "../../services/api/auth";
-import { showToast } from "../../utils/toast";
-import useUserContext from "../../contexts/UserContext";
-import { email } from "../../validations/validationUtils";
+import React, { useState, useEffect } from "react";
+import Button from "../../../components/common/button/Button";
+import { authAPI } from "../../../services/api/auth";
+import { showToast } from "../../../utils/toast";
+import useUserContext from "../../../contexts/UserContext";
+import { email } from "../../../validations/validationUtils";
 
-const SendVerifyEmail: React.FC = () => {
+const SendVerifyEmailPage: React.FC = () => {
   const queryParams = new URLSearchParams(window.location.search);
   const email = queryParams.get("email");
 
   const handleResendEmail = async () => {
     try {
-      await authService.resendVerificationEmail({ email });
+      await authAPI.resendVerificationEmail({ email });
       showToast("Email was sent successfully");
     } catch (err) {
       /**/
@@ -31,4 +31,4 @@ const SendVerifyEmail: React.FC = () => {
   );
 };
 
-export default SendVerifyEmail;
+export default SendVerifyEmailPage;

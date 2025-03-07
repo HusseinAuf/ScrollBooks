@@ -1,8 +1,8 @@
 import React from "react";
-import logo from "../../../assets/images/scrollbooks_logo.png";
-import Button from "../../common/buttons/Button";
+import logo from "../../../../assets/images/scrollbooks_logo.png";
+import Button from "../../../../components/common/button/Button";
 import { useNavigate } from "react-router-dom";
-import useUserContext from "../../../contexts/UserContext";
+import useUserContext from "../../../../contexts/UserContext";
 
 const HeroSection: React.FC = () => {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ const HeroSection: React.FC = () => {
   }, []);
 
   const handleGetStarted = () => {
-    navigate("/signin");
+    navigate("/login");
   };
 
   const handleExploreBooks = () => {

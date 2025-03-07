@@ -1,5 +1,5 @@
 import axios from "axios";
-import { authService } from "../services/api/auth";
+import { authAPI } from "../services/api/auth";
 
 const apiRootUrl = process.env.REACT_APP_API_ROOT_URL;
 
@@ -31,8 +31,8 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const response = await authService.refreshToken();
-        const token = response?.data?.access_token;
+        const response = await authAPI.refreshToken();
+        const token = response.data.access_token;
         if (token) {
           localStorage.setItem("access_token", token);
           originalRequest.headers["Authorization"] = `Bearer ${token}`;
@@ -41,7 +41,8 @@ axiosInstance.interceptors.response.use(
       } catch (refreshError) {
         console.error("Error refreshing token:", refreshError);
         localStorage.removeItem("access_token");
-        window.location.href = "/signin";
+        localStorage.removeItem("user");
+        window.location.href = "/login";
       }
     }
     return Promise.reject(error);
@@ -54,5 +55,13 @@ const publicAxiosInstance = axios.create({
     Accept: "application/json",
   },
 });
+
+publicAxiosInstance.interceptors.response.use(
+  (response) =>
+    response.config.method === "delete" ? response : response.data,
+  async (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export { axiosInstance, publicAxiosInstance };

@@ -1,20 +1,20 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
-import LoadingPage from "../../components/common/LoadingPages/LoadingPage";
-import { authService } from "../../services/api/auth";
-import { showToast } from "../../utils/toast";
+import LoadingPage from "../../../components/common/LoadingPages/LoadingPage";
+import { authAPI } from "../../../services/api/auth";
+import { showToast } from "../../../utils/toast";
 
-const VerifyEmail: React.FC = () => {
+const VerifyEmailPage: React.FC = () => {
   const navigate = useNavigate();
   const { id, token } = useParams();
   const onEmailVerificationSuccess = () => {
     showToast("Welcome to ScrollBooks!");
-    navigate("/signin");
+    navigate("/login");
   };
 
   const onEmailVerificationFailure = () => {
     showToast("This link may have expired. Please request a new one.", "error");
-    // navigate("/signin");
+    // navigate("/login");
   };
 
   useEffect(() => {
@@ -24,7 +24,7 @@ const VerifyEmail: React.FC = () => {
         return;
       }
       try {
-        await authService.verifyEmail(id, token);
+        await authAPI.verifyEmail(id, token);
         onEmailVerificationSuccess();
         return;
       } catch (err) {
@@ -38,4 +38,4 @@ const VerifyEmail: React.FC = () => {
   return <LoadingPage />;
 };
 
-export default VerifyEmail;
+export default VerifyEmailPage;

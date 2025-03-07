@@ -1,9 +1,9 @@
 import { axiosInstance } from "../../axios/userAxios";
 
-export const reviewService = {
+export const reviewAPI = {
   getReviews: async (bookID: number, page: number) => {
     const response = await axiosInstance.get(
-      `/api/v1/books/books/${bookID}/reviews/?page_size=1&page=${page}`
+      `/api/v1/books/books/${bookID}/reviews/?page_size=2&page=${page}`
     );
     return response;
   },

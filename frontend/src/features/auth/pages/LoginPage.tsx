@@ -1,18 +1,19 @@
 import React, { useState } from "react";
-import Button from "../../components/common/buttons/Button";
-import useUserContext from "../../contexts/UserContext";
+import Button from "../../../components/common/button/Button";
+import useUserContext from "../../../contexts/UserContext";
 import { useGoogleLogin } from "@react-oauth/google";
 import { FaGoogle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { signinSchema } from "../../validations/signin";
-import { authService } from "../../services/api/auth";
-import { showToast } from "../../utils/toast";
-import LoadingPage from "../../components/common/LoadingPages/LoadingPage";
+import { loginSchema } from "../../../validations/login";
+import { authAPI } from "../../../services/api/auth";
+import { showToast } from "../../../utils/toast";
+import LoadingPage from "../../../components/common/LoadingPages/LoadingPage";
 import { useNavigate } from "react-router-dom";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
-const Signin: React.FC = () => {
+const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const {
     register,
@@ -20,24 +21,25 @@ const Signin: React.FC = () => {
     formState: { errors },
     getValues,
   } = useForm({
-    resolver: yupResolver(signinSchema), // Integrate Yup with React Hook Form
+    resolver: yupResolver(loginSchema), // Integrate Yup with React Hook Form
   });
   const { setAccessToken } = useUserContext();
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSignin = async (formData: object) => {
+  const handleLogin = async (formData: object) => {
     try {
       setIsLoading(true);
-      const response = await authService.signin(formData);
+      const response = await authAPI.login(formData);
+      console.log(response);
       const token = response.data.access_token;
       localStorage.setItem("access_token", token);
       setAccessToken(token);
-      showToast("Sign In succeeded");
+      showToast("Welcome to Scroll Books");
+      navigate("/books");
+      navigate(0);
     } catch (err: any) {
-      const code = err?.response.data.code;
-      if (code === "USER_NOT_VERIFIED") {
-        navigate(`/send-verify-email?email=${getValues("email")}`);
-      }
+      showToast("Failed to Log In", "error");
     } finally {
       setIsLoading(false);
     }
@@ -47,7 +49,7 @@ const Signin: React.FC = () => {
     onSuccess: async (googleResponse) => {
       console.log(googleResponse);
       try {
-        const response = await authService.googleAuth({
+        const response = await authAPI.googleAuth({
           google_code: googleResponse.code,
         });
         console.log(response);
@@ -69,9 +71,9 @@ const Signin: React.FC = () => {
       <div className="flex flex-col gap-8 items-center">
         <div className="flex flex-col md:flex-row items-center gap-8">
           <div className="flex flex-col justify-center items-center">
-            <h1 className="text-2xl font-bold mb-6">Sign In</h1>
+            <h1 className="text-2xl font-bold mb-6">Log In</h1>
             <form
-              onSubmit={handleSubmit(handleSignin)}
+              onSubmit={handleSubmit(handleLogin)}
               className="text-sm flex flex-col items-center gap-y-4 w-[90%] sm:w-60"
             >
               <div className="flex flex-col gap-2 w-full">
@@ -90,16 +92,29 @@ const Signin: React.FC = () => {
                 )}
               </div>
               <div className="flex flex-col gap-2 w-full">
-                <input
-                  type="password"
-                  placeholder="Password"
-                  {...register("password")}
-                  className={`bg-white border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none ${
-                    errors?.password
-                      ? "border-red-400"
-                      : "focus:border-mediumBlue"
-                  }`}
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
+                    {...register("password")}
+                    className={`bg-white border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none ${
+                      errors?.password
+                        ? "border-red-400"
+                        : "focus:border-mediumBlue"
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-mediumBlue hover:text-darkBlue"
+                  >
+                    {showPassword ? (
+                      <AiFillEyeInvisible className="w-5 h-5" />
+                    ) : (
+                      <AiFillEye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
                 {errors?.password && (
                   <p className="text-sm text-red-300">
                     {errors.password?.message}
@@ -118,7 +133,7 @@ const Signin: React.FC = () => {
           <div className="font-bold">OR</div>
           <div>
             <Button onClick={() => handlegoogleAuth()} icon={FaGoogle}>
-              Sign in with Google
+              Log in with Google
             </Button>
           </div>
         </div>
@@ -133,4 +148,4 @@ const Signin: React.FC = () => {
   );
 };
 
-export default Signin;
+export default LoginPage;
