@@ -8,7 +8,6 @@ import { confirmResetPassword } from "../../../validations/confirmResetPassword"
 import { authAPI } from "../../../services/api/auth";
 import { showToast } from "../../../utils/toast";
 import LoadingPage from "../../../components/common/LoadingPages/LoadingPage";
-import { error } from "console";
 
 const ConfirmResetPasswordPage: React.FC = () => {
   const navigate = useNavigate();
