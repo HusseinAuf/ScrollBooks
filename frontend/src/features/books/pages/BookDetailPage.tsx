@@ -139,7 +139,7 @@ const BookDetailPage: React.FC = () => {
       </div>
     );
   }
-  console.log(book);
+
   return (
     <>
       {isOpenReadView && (

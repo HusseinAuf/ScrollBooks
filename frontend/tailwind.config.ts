@@ -1,7 +1,9 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+// /** @type {import('tailwindcss').Config} */
+import type { Config } from "tailwindcss";
+
+const config: Config = {
   purge: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
-  darkMode: false, // or 'media' or 'class'
+  // darkMode: false,
   theme: {
     extend: {
       colors: {
@@ -24,3 +26,5 @@ module.exports = {
     // require("@tailwindcss/aspect-ratio"),
   ],
 };
+
+export default config;

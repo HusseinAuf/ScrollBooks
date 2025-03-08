@@ -31,7 +31,6 @@ const LoginPage: React.FC = () => {
     try {
       setIsLoading(true);
       const response = await authAPI.login(formData);
-      console.log(response);
       const token = response.data.access_token;
       localStorage.setItem("access_token", token);
       setAccessToken(token);
@@ -47,12 +46,10 @@ const LoginPage: React.FC = () => {
 
   const handlegoogleAuth = useGoogleLogin({
     onSuccess: async (googleResponse) => {
-      console.log(googleResponse);
       try {
         const response = await authAPI.googleAuth({
           google_code: googleResponse.code,
         });
-        console.log(response);
       } catch (err) {
         /**/
       }

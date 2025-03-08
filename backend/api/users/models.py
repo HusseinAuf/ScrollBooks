@@ -23,13 +23,7 @@ class UserManager(BaseUserManager):
         user.is_verified = True
         user.is_staff = True
         user.is_superuser = True
-        print("user.is_verified: ", user.is_verified)
-        print("user.is_staff: ", user.is_staff)
-        print("user.is_superuser: ", user.is_superuser)
         user.save(using=self._db)
-        print("user.is_verified: ", user.is_verified)
-        print("user.is_staff: ", user.is_staff)
-        print("user.is_superuser: ", user.is_superuser)
         return user
 
 

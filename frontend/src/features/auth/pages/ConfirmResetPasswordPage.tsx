@@ -35,9 +35,6 @@ const ConfirmResetPasswordPage: React.FC = () => {
       setIsLoading(false);
     }
   };
-  useEffect(() => {
-    console.log(errors);
-  }, [errors]);
 
   return isLoading ? (
     <LoadingPage />

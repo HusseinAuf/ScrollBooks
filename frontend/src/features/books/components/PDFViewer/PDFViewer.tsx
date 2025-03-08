@@ -40,7 +40,6 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ pdfUrl, onClose }) => {
   }, []);
 
   const handleMouseEnter = () => {
-    console.log("mouse entered");
     clearTimeout(hideTimeout);
     setShowControls(true);
   };

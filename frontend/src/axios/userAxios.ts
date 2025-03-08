@@ -1,7 +1,7 @@
 import axios from "axios";
 import { authAPI } from "../services/api/auth";
 
-const apiRootUrl = process.env.REACT_APP_API_ROOT_URL;
+const apiRootUrl = import.meta.env.VITE_API_ROOT_URL;
 
 const axiosInstance = axios.create({
   baseURL: apiRootUrl,
