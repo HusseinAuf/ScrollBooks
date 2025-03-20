@@ -22,6 +22,8 @@ services:
   api: &api
     build:
       context: backend
+      args:
+        ENV_MODE: ${ENV_MODE} # Pass from .env
     env_file:
       - .env
     environment:
