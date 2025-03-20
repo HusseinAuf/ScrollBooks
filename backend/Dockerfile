@@ -30,7 +30,12 @@ COPY poetry.lock ./
 
 COPY pyproject.toml ./
 
-RUN poetry install --no-root --only main --sync
+# Install dependencies based on env mode
+RUN if [ "$ENV_MODE" = "development" ]; then \
+      poetry install --no-root --with dev --sync; \
+    else \
+      poetry install --no-root --only main --sync; \
+    fi
 
 WORKDIR /home/scrollbooks
 
