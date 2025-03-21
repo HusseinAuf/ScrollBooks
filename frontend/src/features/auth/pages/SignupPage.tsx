@@ -8,9 +8,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { signupSchema } from "../../../validations/signup";
 import { authAPI } from "../../../services/api/auth";
 import { showToast } from "../../../utils/toast";
-import LoadingPage from "../../../components/common/LoadingPages/LoadingPage";
+import LoadingPage from "../../../pages/LoadingPages/LoadingPage";
 import { useNavigate } from "react-router-dom";
 import useUserContext from "../../../contexts/UserContext";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 const SignupPage: React.FC = () => {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ const SignupPage: React.FC = () => {
   });
   const { setUser } = useUserContext();
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSignup = async (formData: object) => {
     try {
@@ -96,16 +98,29 @@ const SignupPage: React.FC = () => {
                 )}
               </div>
               <div className="flex flex-col gap-2 w-full">
-                <input
-                  type="password"
-                  placeholder="Password"
-                  {...register("password")}
-                  className={`bg-white border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none ${
-                    errors?.password
-                      ? "border-red-400"
-                      : "focus:border-mediumBlue"
-                  }`}
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
+                    {...register("password")}
+                    className={`bg-white border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none ${
+                      errors?.password
+                        ? "border-red-400"
+                        : "focus:border-mediumBlue"
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-mediumBlue hover:text-darkBlue"
+                  >
+                    {showPassword ? (
+                      <AiFillEyeInvisible className="w-5 h-5" />
+                    ) : (
+                      <AiFillEye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
                 {errors?.password && (
                   <p className="text-sm text-red-300">
                     {errors.password?.message}
