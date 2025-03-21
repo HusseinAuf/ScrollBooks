@@ -9,7 +9,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../../../validations/login";
 import { authAPI } from "../../../services/api/auth";
 import { showToast } from "../../../utils/toast";
-import LoadingPage from "../../../components/common/LoadingPages/LoadingPage";
+import LoadingPage from "../../../pages/LoadingPages/LoadingPage";
 import { useNavigate } from "react-router-dom";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 

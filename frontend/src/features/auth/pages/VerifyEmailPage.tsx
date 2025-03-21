@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
-import LoadingPage from "../../../components/common/LoadingPages/LoadingPage";
+import LoadingPage from "../../../pages/LoadingPages/LoadingPage";
 import { authAPI } from "../../../services/api/auth";
 import { showToast } from "../../../utils/toast";
 

@@ -6,7 +6,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { resetPassword } from "../../../validations/resetPassword";
 import { authAPI } from "../../../services/api/auth";
 import { showToast } from "../../../utils/toast";
-import LoadingPage from "../../../components/common/LoadingPages/LoadingPage";
+import LoadingPage from "../../../pages/LoadingPages/LoadingPage";
 
 const ResetPasswordPage: React.FC = () => {
   const {
