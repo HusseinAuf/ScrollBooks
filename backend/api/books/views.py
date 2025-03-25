@@ -115,12 +115,6 @@ class OrderViewSet(BaseViewSet, NonUpdatableViewSet, NonDeletableViewSet):
     serializer_class = OrderSerializer
     permission_relation = "user.pk"
 
-    # def create(self, request, *args, **kwargs):
-    #     serializer = self.get_serializer(data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-    #     serializer.save()
-    #     return Response(serializer.data, status=201)
-
 
 class OrderItemViewSet(BaseViewSet, NonUpdatableViewSet, NonDeletableViewSet):
     model = Order

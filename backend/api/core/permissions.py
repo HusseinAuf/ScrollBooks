@@ -1,16 +1,16 @@
-from rest_framework.permissions import DjangoModelPermissions
+from rest_framework import permissions
 
 
-class BasePermissions(DjangoModelPermissions):
+class BasePermissions(permissions.DjangoModelPermissions):
     def has_permission(self, request, view):
-        if view.action in ["list", "retrieve"]:
+        if request.method in permissions.SAFE_METHODS:
             return True
         if not request.user or (not request.user.is_authenticated and self.authenticated_users_only):
             return False
         return True
 
     def has_object_permission(self, request, view, obj):
-        if view.action not in ["update", "partial_update", "delete"]:
+        if request.method in permissions.SAFE_METHODS:
             return True
         user = request.user
         if hasattr(view, "permission_relation"):
