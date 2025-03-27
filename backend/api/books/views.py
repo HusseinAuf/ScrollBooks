@@ -105,7 +105,7 @@ class ReviewViewSet(BaseViewSet):
         return super().get_object()
 
     def perform_create(self, serializer):
-        book = get_object_or_none(Book, pk=self.kwargs.get("book_pk"))  # Ensure the book exists
+        book = get_object_or_none(Book, pk=self.kwargs.get("book_pk"))
         serializer.save(user=self.request.user, **({"book": book} if book else {}))
 
 

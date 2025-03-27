@@ -22,7 +22,7 @@ from core.tests.utils import create_mock_image, create_mock_pdf_file
 class BaseBookAPITestCase(BaseAPITestCase):
     def setUp(self):
         super().setUp()
-        # Author/User client
+        # Author client
         self.author = AuthorFactory()
         self.author_user = self.author.user
         self.author_client = APIClient()
@@ -155,11 +155,12 @@ class ReviewViewSetTests(BaseBookAPITestCase):
 
     def test_create_review(self):
         review_data = {
-            "book": self.books[0].id,
             "rating": 4,
             "comment": "Great Book!",
         }
-        response = self.author_client.post(reverse("books:review-list"), review_data)
+        response = self.reader_client.post(
+            reverse("books:review-list", kwargs={"book_pk": self.books[0].id}), review_data
+        )
         data = response.json()
         self.assertStatusCode(data, 201)
         review = Review.objects.get(id=data["data"]["id"])
@@ -228,16 +229,6 @@ class OrderViewSetTests(BaseBookAPITestCase):
         order = Order.objects.get(id=data["data"]["id"])
         self.assertRightData(order, data)
 
-    def test_create_book_order(self):
-        response = self.reader_client.post(
-            reverse("books:order-list"),
-            {"book_id": self.book.id},
-        )
-        data = response.json()
-        self.assertStatusCode(data, 201)
-        order = Order.objects.get(id=data["data"]["id"])
-        self.assertRightData(order, data)
-
     def test_list_orders(self):
         response = self.reader_client.get(reverse("books:order-list"))
         data = response.json()
@@ -269,7 +260,7 @@ class CartItemViewSetTests(BaseBookAPITestCase):
     def test_create_cart_item(self):
         response = self.reader_client.post(
             reverse("books:cart-item-list"),
-            {"book": self.book.id},
+            {"book_id": self.book.id},
         )
         data = response.json()
         self.assertStatusCode(data, 201)
