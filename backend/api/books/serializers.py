@@ -128,17 +128,14 @@ class OrderSerializer(BaseModelSerializer):
 
 
 class ReviewSerializer(BaseModelSerializer):
+    from users.serializers import UserSerializer
+
+    user = UserSerializer(read_only=True)
+
     class Meta:
         model = Review
         fields = "__all__"
         read_only_fields = ["user", "book"]
-
-    def to_representation(self, instance):
-        from users.serializers import UserSerializer
-
-        data = super().to_representation(instance)
-        data["user"] = UserSerializer(instance.user).data
-        return data
 
 
 class CartItemSerializer(BaseModelSerializer):

@@ -3,10 +3,11 @@ from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 from celery import shared_task
 import mimetypes
+from core.utils import is_running_tests
 
 
 @shared_task
-def send_email(
+def send_email_task(
     subject,
     message,
     html_content=None,
@@ -17,7 +18,10 @@ def send_email(
     attachments=None,
     reply_to=None,
     headers=None,
+    is_running_tests=False,
 ):
+    if is_running_tests:
+        settings.EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
     email = EmailMultiAlternatives(
         subject=subject,
         body=message,
@@ -43,5 +47,9 @@ def send_email(
     return result
 
 
-def send_bulk_email(datatuple, fail_silently=False):
-    return EmailMultiAlternatives(datatuple).send(fail_silently=fail_silently)
+def send_email(*args, **kwargs):
+    """
+    Wrapper function to determine if tests are running and call the Celery task.
+    """
+    kwargs["is_running_tests"] = is_running_tests()
+    send_email_task.delay(*args, **kwargs)
