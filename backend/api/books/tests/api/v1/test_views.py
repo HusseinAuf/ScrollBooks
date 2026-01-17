@@ -51,7 +51,7 @@ class AuthorViewSetTests(BaseBookAPITestCase):
             "website": "https://new-website.com",
             "date_of_birth": "2000-01-01",
         }
-        response = self.reader_client.post(reverse("books:author-list"), author_data)
+        response = self.reader_client.post(reverse("books:v1:author-list"), author_data)
         data = response.json()
         self.assertStatusCode(data, 201)
         author = Author.objects.get(id=data["data"]["id"])
@@ -59,7 +59,7 @@ class AuthorViewSetTests(BaseBookAPITestCase):
 
     def test_update_author(self):
         response = self.author_client.patch(
-            reverse("books:author-detail", args=[self.author.id]),
+            reverse("books:v1:author-detail", args=[self.author.id]),
             {
                 "bio": "Updated Bio",
                 "website": "https://updated-website.com",
@@ -72,7 +72,7 @@ class AuthorViewSetTests(BaseBookAPITestCase):
         self.assertRightData(self.author, data)
 
     def test_delete_author(self):
-        response = self.author_client.delete(reverse("books:author-detail", args=[self.author.id]))
+        response = self.author_client.delete(reverse("books:v1:author-detail", args=[self.author.id]))
         self.assertStatusCode({"status_code": response.status_code}, 204)
         self.assertFalse(Author.objects.filter(id=self.author.id).exists())
 
@@ -101,21 +101,21 @@ class BookViewSetTests(BaseBookAPITestCase):
             "published_date": "1999-01-01",
             "categories": [1, 2],
         }
-        response = self.author_client.post(reverse("books:book-list"), book_data)
+        response = self.author_client.post(reverse("books:v1:book-list"), book_data)
         data = response.json()
         self.assertStatusCode(data, 201)
         book = Book.objects.get(id=data["data"]["id"])
         self.assertRightData(book, data)
 
     def test_list_books(self):
-        response = self.author_client.get(reverse("books:book-list"))
+        response = self.author_client.get(reverse("books:v1:book-list"))
         data = response.json()
         self.assertStatusCode(data, 200)
         self.assertEqual(len(data["data"]), min(settings.PAGINATION_PAGE_SIZE, len(self.books) + 1))
         self.assertEqual(data["meta"]["count"], len(self.books) + 1)
 
     def test_retrieve_book(self):
-        response = self.author_client.get(reverse("books:book-detail", args=[self.books[0].id]))
+        response = self.author_client.get(reverse("books:v1:book-detail", args=[self.books[0].id]))
         data = response.json()
         self.assertStatusCode(data, 200)
         self.assertRightData(self.books[0], data)
@@ -129,14 +129,14 @@ class BookViewSetTests(BaseBookAPITestCase):
             "cover_image": create_mock_image(),
             "published_date": "1999-01-02",
         }
-        response = self.author_client.patch(reverse("books:book-detail", args=[self.books[0].id]), book_data)
+        response = self.author_client.patch(reverse("books:v1:book-detail", args=[self.books[0].id]), book_data)
         data = response.json()
         self.assertStatusCode(data, 200)
         self.books[0].refresh_from_db()
         self.assertRightData(self.books[0], data)
 
     def test_delete_book(self):
-        response = self.author_client.delete(reverse("books:book-detail", args=[self.books[0].id]))
+        response = self.author_client.delete(reverse("books:v1:book-detail", args=[self.books[0].id]))
         self.assertStatusCode({"status_code": response.status_code}, 204)
         self.assertFalse(Book.objects.filter(id=self.books[0].id).exists())
 
@@ -159,7 +159,7 @@ class ReviewViewSetTests(BaseBookAPITestCase):
             "comment": "Great Book!",
         }
         response = self.reader_client.post(
-            reverse("books:review-list", kwargs={"book_pk": self.books[0].id}), review_data
+            reverse("books:v1:book-review-list", kwargs={"book_pk": self.books[0].id}), review_data
         )
         data = response.json()
         self.assertStatusCode(data, 201)
@@ -167,14 +167,14 @@ class ReviewViewSetTests(BaseBookAPITestCase):
         self.assertRightData(review, data)
 
     def test_list_reviews(self):
-        response = self.author_client.get(reverse("books:review-list", kwargs={"book_pk": self.books[0].id}))
+        response = self.author_client.get(reverse("books:v1:book-review-list", kwargs={"book_pk": self.books[0].id}))
         data = response.json()
         self.assertStatusCode(data, 200)
         self.assertEqual(len(data["data"]), 1)
         self.assertEqual(data["meta"]["count"], 1)
 
     def test_retrieve_review(self):
-        response = self.author_client.get(reverse("books:review-detail", args=[self.reviews[0].id]))
+        response = self.author_client.get(reverse("books:v1:review-detail", args=[self.reviews[0].id]))
         data = response.json()
         self.assertStatusCode(data, 200)
         self.assertRightData(self.reviews[0], data)
@@ -185,14 +185,15 @@ class ReviewViewSetTests(BaseBookAPITestCase):
             "rating": 4,
             "comment": "Great Book!",
         }
-        response = self.reader_client.patch(reverse("books:review-detail", args=[self.reviews[0].id]), review_data)
+        response = self.reader_client.patch(reverse("books:v1:review-detail", args=[self.reviews[0].id]), review_data)
         data = response.json()
         self.assertStatusCode(data, 200)
         self.reviews[0].refresh_from_db()
         self.assertRightData(self.reviews[0], data)
 
     def test_delete_review(self):
-        response = self.author_client.delete(reverse("books:review-detail", args=[self.reviews[0].id]))
+        self.reader_client.force_authenticate(self.users[0])
+        response = self.reader_client.delete(reverse("books:v1:review-detail", args=[self.reviews[0].id]))
         self.assertStatusCode({"status_code": response.status_code}, 204)
         self.assertFalse(Review.objects.filter(id=self.reviews[0].id).exists())
 
@@ -221,7 +222,7 @@ class OrderViewSetTests(BaseBookAPITestCase):
     def test_create_cart_order(self):
         CartItemFactory(cart=self.reader_user.cart, book=self.book)
         response = self.reader_client.post(
-            reverse("books:order-list"),
+            reverse("books:v1:order-list"),
             {"buy_all_cart": True},
         )
         data = response.json()
@@ -230,14 +231,14 @@ class OrderViewSetTests(BaseBookAPITestCase):
         self.assertRightData(order, data)
 
     def test_list_orders(self):
-        response = self.reader_client.get(reverse("books:order-list"))
+        response = self.reader_client.get(reverse("books:v1:order-list"))
         data = response.json()
         self.assertStatusCode(data, 200)
         self.assertEqual(len(data["data"]), len(self.orders))
         self.assertEqual(data["meta"]["count"], len(self.orders))
 
     def test_retrieve_order(self):
-        response = self.reader_client.get(reverse("books:order-detail", args=[self.orders[0].id]))
+        response = self.reader_client.get(reverse("books:v1:order-detail", args=[self.orders[0].id]))
         data = response.json()
         self.assertStatusCode(data, 200)
         self.assertEqual(str(self.books[0].price), data["data"]["order_items"][0]["price"])
@@ -259,7 +260,7 @@ class CartItemViewSetTests(BaseBookAPITestCase):
 
     def test_create_cart_item(self):
         response = self.reader_client.post(
-            reverse("books:cart-item-list"),
+            reverse("books:v1:cart-item-list"),
             {"book_id": self.book.id},
         )
         data = response.json()
@@ -268,19 +269,19 @@ class CartItemViewSetTests(BaseBookAPITestCase):
         self.assertRightData(cart_item, data)
 
     def test_list_cart_items(self):
-        response = self.reader_client.get(reverse("books:cart-item-list"))
+        response = self.reader_client.get(reverse("books:v1:cart-item-list"))
         data = response.json()
         self.assertStatusCode(data, 200)
         self.assertEqual(len(data["data"]), len(self.books))
         self.assertEqual(data["meta"]["count"], len(self.books))
 
     def test_retrieve_cart_item(self):
-        response = self.reader_client.get(reverse("books:cart-item-detail", args=[self.cart_items[0].id]))
+        response = self.reader_client.get(reverse("books:v1:cart-item-detail", args=[self.cart_items[0].id]))
         data = response.json()
         self.assertStatusCode(data, 200)
         self.assertRightData(self.cart_items[0], data)
 
     def test_delete_cart_item(self):
-        response = self.reader_client.delete(reverse("books:cart-item-detail", args=[self.cart_items[0].id]))
+        response = self.reader_client.delete(reverse("books:v1:cart-item-detail", args=[self.cart_items[0].id]))
         self.assertStatusCode({"status_code": response.status_code}, 204)
         self.assertFalse(CartItem.objects.filter(id=self.cart_items[0].id).exists())

@@ -13,8 +13,8 @@ from drf_spectacular.views import (
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("books.urls", namespace="books-api")),
-    path("", include("users.urls", namespace="users-api")),
+    path("", include(("books.urls", "books"), namespace="books")),
+    path("", include(("users.urls", "users"), namespace="users")),
 ]
 
 # Schema URLs

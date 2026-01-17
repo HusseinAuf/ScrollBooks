@@ -24,7 +24,7 @@ class UserViewSetTests(BaseAPITestCase):
 
     def test_me_endpoint(self):
         """Test /me endpoint."""
-        response = self.client.get(reverse("users:user-me"))
+        response = self.client.get(reverse("users:v1:user-me"))
         data = response.json()
         self.assertStatusCode(data, 200)
         self.assertRightData(self.user, data)
@@ -33,7 +33,7 @@ class UserViewSetTests(BaseAPITestCase):
         """Test list author users"""
         author = AuthorFactory()
         query_params = {"is_author": True}
-        response = self.client.get(reverse("users-api:user-list") + f"?{urlencode(query_params)}")
+        response = self.client.get(reverse("users:v1:user-list") + f"?{urlencode(query_params)}")
         data = response.json()
         self.assertStatusCode(data, 200)
         self.assertEqual(len(data["data"]), 1)
@@ -48,7 +48,7 @@ class UserViewSetTests(BaseAPITestCase):
             "name": "New Name",
             "phone_number": "00201094448432",
         }
-        response = self.client.post(reverse("users-api:user-list"), user_data)
+        response = self.client.post(reverse("users:v1:user-list"), user_data)
         data = response.json()
         self.assertStatusCode(data, 201)
         user = User.objects.get(id=data["data"]["id"])
@@ -57,7 +57,7 @@ class UserViewSetTests(BaseAPITestCase):
     def test_update_user(self):
         """Test update user."""
         user_data = {"name": "Updated Name", "phone_number": "00201094448435"}
-        response = self.client.patch(reverse("users-api:user-detail", args=[self.user.id]), user_data)
+        response = self.client.patch(reverse("users:v1:user-detail", args=[self.user.id]), user_data)
         data = response.json()
         self.assertStatusCode(data, 200)
         self.user.refresh_from_db()
@@ -72,7 +72,7 @@ class LoginViewTests(BaseAPITestCase):
     def test_login_success(self):
         """Test successful login."""
         response = self.client.post(
-            reverse("users-api:login"),
+            reverse("users:v1:login"),
             {"email": self.user.email, "password": "defaultpassword"},
         )
         data = response.json()
@@ -83,7 +83,7 @@ class LoginViewTests(BaseAPITestCase):
     def test_login_invalid_credentials(self):
         """Test login with invalid credentials."""
         response = self.client.post(
-            reverse("users-api:login"),
+            reverse("users:v1:login"),
             {"email": self.user.email, "password": "wrongpassword"},
         )
         data = response.json()
@@ -99,7 +99,7 @@ class VerifyEmailTests(BaseAPITestCase):
 
     def test_verify_email_success(self):
         """Test email verification success."""
-        url = reverse("users-api:verify-email", args=[self.uid, self.token])
+        url = reverse("users:v1:verify-email", args=[self.uid, self.token])
         response = self.client.get(url)
         data = response.json()
         self.assertStatusCode(data, 200)
@@ -108,7 +108,7 @@ class VerifyEmailTests(BaseAPITestCase):
 
     def test_verify_email_invalid_token(self):
         """Test email verification with an invalid token."""
-        url = reverse("users-api:verify-email", args=[self.uid, "invalidtoken"])
+        url = reverse("users:v1:verify-email", args=[self.uid, "invalidtoken"])
         response = self.client.get(url)
         data = response.json()
         self.assertStatusCode(data, 400)
@@ -122,7 +122,7 @@ class LogoutViewTests(BaseAPITestCase):
 
     def test_logout(self):
         """Test successful logout."""
-        response = self.client.get(reverse("users-api:logout"))
+        response = self.client.get(reverse("users:v1:logout"))
         data = response.json()
         self.assertStatusCode(data, 200)
 
@@ -132,14 +132,14 @@ class TokenRefreshViewTests(BaseAPITestCase):
         super().setUp()
         self.user = UserFactory()
         response = self.client.post(
-            reverse("users-api:login"),
+            reverse("users:v1:login"),
             {"email": self.user.email, "password": "defaultpassword"},
         )
         self.refresh_token = response.cookies.get("refresh_token").value
 
     def test_refresh_token(self):
         """Test refreshing the JWT token."""
-        response = self.client.post(reverse("users-api:token-refresh"), {"refresh_token": self.refresh_token})
+        response = self.client.post(reverse("users:v1:token-refresh"), {"refresh_token": self.refresh_token})
         data = response.json()
         self.assertStatusCode(data, 200)
         self.assertIn("access_token", data["data"])
@@ -152,7 +152,7 @@ class PasswordResetViewTests(BaseAPITestCase):
 
     def test_password_reset(self):
         """Test password reset email is sent."""
-        response = self.client.post(reverse("users-api:password-reset"), {"email": self.user.email})
+        response = self.client.post(reverse("users:v1:password-reset"), {"email": self.user.email})
         data = response.json()
         self.assertStatusCode(data, 200)
 
@@ -170,7 +170,7 @@ class PasswordResetConfirmViewTests(BaseAPITestCase):
             "confirm_new_password": "newpassword123",
         }
         response = self.client.post(
-            reverse("users-api:password-reset-confirm", args=[self.uid, self.token]),
+            reverse("users:v1:password-reset-confirm", args=[self.uid, self.token]),
             user_data,
         )
         data = response.json()
