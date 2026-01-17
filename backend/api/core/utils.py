@@ -1,10 +1,11 @@
+import logging
 import os
 import uuid
+
 from django.conf import settings
+from django.template.loader import render_to_string
 from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
-import logging
-from django.template.loader import render_to_string
 
 # Setup logging
 logger = logging.getLogger(__name__)
@@ -30,10 +31,6 @@ def dynamic_admin_readonly_fields(model, fields_to_keep: list = [], extra_fields
     fields_set = fields_set.difference(fields_to_keep)
     fields_to_mark_readonly = filter(lambda field: hasattr(model, field), fields_set)
     return tuple(fields_to_mark_readonly)
-
-
-def destroy_existing_items(instance_items, to_update):
-    instance_items.exclude(pk__in=to_update.keys()).delete()
 
 
 def generate_random_password(

@@ -49,8 +49,8 @@ repos:
   #         - "@typescript-eslint/parser@^5.39.0"
   #         - eslint-plugin-prettier@^4.2.1
 
-  # - repo: https://github.com/pycqa/isort
-  #   rev: 5.10.1
-  #   hooks:
-  #     - id: isort
-  #       name: isort (python)
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        name: isort (python)
