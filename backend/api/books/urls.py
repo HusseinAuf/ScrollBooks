@@ -5,5 +5,5 @@ from books.apps import BooksConfig
 app_name = BooksConfig.name
 
 urlpatterns = [
-    path("api/", include("books.api.urls"), name="books-api"),
+    path("api/", include("books.api.urls")),
 ]

@@ -226,19 +226,26 @@ SPECTACULAR_SETTINGS = {
 }
 
 SIMPLE_JWT = {
+    # Header & algorithm
     "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+    "ALGORITHM": "HS256",
+    # "SIGNING_KEY": SECRET_KEY,  # optional, defaults to SECRET_KEY
+    # Token lifetimes
     "ACCESS_TOKEN_LIFETIME": timedelta(days=60),  # Just for testing purposes, should be 5 minutes in production
     "REFRESH_TOKEN_LIFETIME": timedelta(days=15),  # Just for testing purposes, should be 1 day in production
+    # Refresh token rotation & blacklist
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
+    # Optional features
     "UPDATE_LAST_LOGIN": True,
-    "ALGORITHM": "HS256",
-    # "SIGNING_KEY": SECRET_KEY,
+    "JWT_CLAIM": "jti",
+    # User identification in token
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",
-    "JWT_CLAIM": "jti",
-    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+    # Token classes (default)
     "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+    # Custom serializers
     "TOKEN_OBTAIN_SERIALIZER": "users.serializers.BaseTokenObtainPairSerializer",
     "TOKEN_REFRESH_SERIALIZER": "users.serializers.CookieTokenRefreshSerializer",
 }

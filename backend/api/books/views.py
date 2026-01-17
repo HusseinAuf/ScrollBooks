@@ -75,7 +75,7 @@ class BookViewSet(BaseViewSet):
             is_in_my_favorites=Exists(user.favorite_books.filter(id=OuterRef("id"))),
         )
 
-        # Get user review of each book
+        # Get user review for each book
         user_review = Review.objects.filter(book=OuterRef("pk"), user=user).values("id", "comment", "rating")
         queryset = queryset.annotate(
             my_review_id=Subquery(user_review.values("id")),
@@ -100,9 +100,6 @@ class ReviewViewSet(BaseViewSet):
         if self.kwargs.get("book_pk"):
             return queryset.filter(book__id=self.kwargs.get("book_pk"))
         return queryset
-
-    def get_object(self):
-        return super().get_object()
 
     def perform_create(self, serializer):
         book = get_object_or_none(Book, pk=self.kwargs.get("book_pk"))

@@ -1,5 +1,4 @@
-from django.urls import path
-from django.urls import include
+from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from users.views import (
     UserViewSet,
@@ -12,6 +11,8 @@ from users.views import (
     VerifyEmail,
     ResendVerificationEmail,
 )
+from users.apps import UsersConfig
+
 
 router = DefaultRouter()
 router.register("users", UserViewSet, basename="user")
