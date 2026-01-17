@@ -1,10 +1,7 @@
-import factory
-from books.models import Author, Book, Order, CartItem, Review
-from django.urls import reverse
-from constants import TEST_PATCH_SIZE
 from decimal import Decimal
-from core.tests.tests import BaseAPITestCase
-from users.tests.factories import UserFactory
+
+import factory
+from books.models import Author, Book, CartItem, Order, Review
 from books.tests.factories import (
     AuthorFactory,
     BookFactory,
@@ -14,9 +11,12 @@ from books.tests.factories import (
     OrderItemFactory,
     ReviewFactory,
 )
-from rest_framework.test import APIClient
-from django.conf import settings
+from core.tests.tests import BaseAPITestCase
 from core.tests.utils import create_mock_image, create_mock_pdf_file
+from django.conf import settings
+from django.urls import reverse
+from rest_framework.test import APIClient
+from users.tests.factories import UserFactory
 
 
 class BaseBookAPITestCase(BaseAPITestCase):
@@ -33,9 +33,9 @@ class BaseBookAPITestCase(BaseAPITestCase):
         self.reader_client = APIClient()
         self.reader_client.force_authenticate(self.reader_user)
 
-        self.users = UserFactory.create_batch(TEST_PATCH_SIZE)
+        self.users = UserFactory.create_batch(self.test_patch_size)
         self.book = BookFactory(author=self.author)
-        self.books = BookFactory.create_batch(TEST_PATCH_SIZE, author=self.author)
+        self.books = BookFactory.create_batch(self.test_patch_size, author=self.author)
 
 
 class AuthorViewSetTests(BaseBookAPITestCase):
