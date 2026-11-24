@@ -1,18 +1,17 @@
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from users.views import (
-    UserViewSet,
-    LoginView,
-    GoogleAuthView,
-    LogoutView,
-    PasswordResetView,
-    PasswordResetConfirmView,
-    TokenRefreshView,
-    VerifyEmail,
-    ResendVerificationEmail,
-)
 from users.apps import UsersConfig
-
+from users.views import (
+    GoogleAuthView,
+    LoginView,
+    LogoutView,
+    PasswordResetConfirmView,
+    PasswordResetView,
+    ResendVerificationEmail,
+    TokenRefreshView,
+    UserViewSet,
+    VerifyEmail,
+)
 
 router = DefaultRouter()
 router.register("users", UserViewSet, basename="user")

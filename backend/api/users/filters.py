@@ -1,6 +1,6 @@
-from django_filters.rest_framework import filters, FilterSet
-from django.db.models import Q, F
+from django.db.models import F, Q
 from django.utils.translation import gettext_lazy as _
+from django_filters.rest_framework import FilterSet, filters
 from rest_framework.serializers import ValidationError
 from users.models import User
 

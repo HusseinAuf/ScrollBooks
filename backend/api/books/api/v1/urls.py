@@ -1,15 +1,13 @@
-from django.urls import path
-from django.urls import include
-from rest_framework_nested.routers import DefaultRouter, NestedSimpleRouter
 from books.views import (
     AuthorViewSet,
     BookViewSet,
-    ReviewViewSet,
+    CartItemViewSet,
     CategoryViewSet,
     OrderViewSet,
-    CartItemViewSet,
+    ReviewViewSet,
 )
-
+from django.urls import include, path
+from rest_framework_nested.routers import DefaultRouter, NestedSimpleRouter
 
 router = DefaultRouter()
 router.register(r"authors", AuthorViewSet, basename="author")

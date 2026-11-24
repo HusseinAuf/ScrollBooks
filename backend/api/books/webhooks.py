@@ -1,9 +1,9 @@
+import stripe
+from books.models import Order, OrderItem, OrderStatus
+from django.conf import settings
+from django.db import transaction
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-import stripe
-from django.conf import settings
-from books.models import Order, OrderStatus, OrderItem
-from django.db import transaction
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 

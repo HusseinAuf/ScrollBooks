@@ -1,14 +1,14 @@
-from django.contrib import admin
 from books.models import (
-    Book,
     Author,
-    Category,
-    Review,
-    Order,
-    OrderItem,
+    Book,
     Cart,
     CartItem,
+    Category,
+    Order,
+    OrderItem,
+    Review,
 )
+from django.contrib import admin
 
 
 @admin.register(Book)

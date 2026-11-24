@@ -1,7 +1,8 @@
-from pathlib import Path
-import environ
 from datetime import timedelta
+from pathlib import Path
 from urllib.parse import urljoin
+
+import environ
 
 # Build paths inside the project like this: BASE_DIR / "subdir".
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -266,8 +267,8 @@ JWT_AUTH_COOKIE_SAMESITE = env.str("JWT_AUTH_ACCESS_COOKIE_SAMESITE", default="L
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
-GOOGLE_CLIENT_ID = "1077906388464-s95grrp7bnu0rvpf82vsc51v1avcc1gh.apps.googleusercontent.com"
-GOOGLE_CLIENT_SECRET = "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"
+GOOGLE_CLIENT_ID = env("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = env("GOOGLE_CLIENT_SECRET")
 
 STRIPE_PUBLIC_KEY = env("STRIPE_PUBLIC_KEY")
 STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")

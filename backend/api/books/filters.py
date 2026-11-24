@@ -1,6 +1,6 @@
-from django_filters.rest_framework import filters, FilterSet
-from django.utils.translation import gettext_lazy as _
 from books.models import Book
+from django.utils.translation import gettext_lazy as _
+from django_filters.rest_framework import FilterSet, filters
 
 
 class BookFilter(FilterSet):
