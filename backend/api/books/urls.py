@@ -1,6 +1,5 @@
-from django.urls import include
-from django.urls import path
 from books.apps import BooksConfig
+from django.urls import include, path
 
 app_name = BooksConfig.name
 

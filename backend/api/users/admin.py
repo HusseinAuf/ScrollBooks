@@ -1,8 +1,8 @@
+from core.utils import dynamic_admin_readonly_fields
 from django.contrib import admin
-from users.models import User
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
-from core.utils import dynamic_admin_readonly_fields
+from users.models import User
 
 
 @admin.register(User)

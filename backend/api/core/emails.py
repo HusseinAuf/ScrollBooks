@@ -1,9 +1,10 @@
-from smtplib import SMTPException
-from django.core.mail import EmailMultiAlternatives
-from django.conf import settings
-from celery import shared_task
 import mimetypes
+from smtplib import SMTPException
+
+from celery import shared_task
 from core.utils import is_running_tests
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
 
 
 @shared_task

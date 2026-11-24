@@ -1,9 +1,8 @@
+from django.conf import settings
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from django.conf import settings
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.settings import api_settings
-
 
 access_cookie_name = settings.JWT_AUTH_ACCESS_COOKIE_NAME
 access_cookie_path = settings.JWT_AUTH_ACCESS_COOKIE_PATH
